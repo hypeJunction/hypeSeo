@@ -1,0 +1,25 @@
+{
+	"name": "hypejunction/hypeseo",
+	"version": "0.0.0",
+	"type": "elgg-plugin",
+	"description": "SEO Tools",
+	"homepage": "http://hypejunction.com",
+	"keywords": [
+		"elgg", "plugin", "seo", "search engine optimization", "open graph", "twitter cards", "analytics"
+	],
+	"license": "GPL-2.0",
+	"authors": [
+		{
+			"name": "Ismayil Khayredinov",
+			"email": "info@hypejunction.com"
+		}
+	],
+	"extra": {
+		"installer-name": "hypeSeo"
+	},
+	"require": {
+		"php": ">=5.5",
+		"composer/installers": "~1.0",
+		"fire015/flintstone": "^2.0"
+	}
+}

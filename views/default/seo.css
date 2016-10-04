@@ -1,0 +1,11 @@
+#colorbox .elgg-form-seo-edit {
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.seo-path {
+	width: auto;
+    text-overflow: ellipsis;
+    margin: 3px 0 10px;
+    text-indent: -10px;
+}
