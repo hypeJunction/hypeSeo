@@ -10,7 +10,7 @@ SEO Tools for Elgg
  * Integrates with hypeDiscovery to populate open graph metatags
 
 ![Dashboard](https://raw.github.com/hypeJunction/hypeSeo/master/screenshots/seo.png "Dashboard")
-![Patterns](https://raw.github.com/hypeJunction/hypeSeo/master/screenshots/seo.png "Patterns")
+![Patterns](https://raw.github.com/hypeJunction/hypeSeo/master/screenshots/patterns.png "Patterns")
 
 ## Notes
 
