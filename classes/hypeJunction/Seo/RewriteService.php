@@ -4,6 +4,7 @@ namespace hypeJunction\Seo;
 
 use ElggEntity;
 use ElggUser;
+use Flintstone\Flintstone;
 use stdClass;
 
 /**
@@ -18,14 +19,14 @@ class RewriteService {
 	private $data_table;
 
 	/**
-	 * @var \Flintstone\Flintstone
+	 * @var Flintstone
 	 */
 	private $routes_cache;
 
 	/**
 	 * Constructor
 	 */
-	public function __construct(\Flintstone\Flintstone $routes_cache) {
+	public function __construct(Flintstone $routes_cache) {
 		$dbprefix = elgg_get_config('dbprefix');
 		$this->table = "{$dbprefix}sef_routes";
 		$this->aliases_table = "{$dbprefix}sef_aliases";
@@ -46,7 +47,7 @@ class RewriteService {
 		$options =[
 			'dir' => elgg_get_config('dataroot'),
 		];
-		$flinstone = new \Flintstone\Flintstone('sef_routes', $options);
+		$flinstone = new Flintstone('sef_routes', $options);
 		return new self($flinstone);
 	}
 
@@ -508,7 +509,7 @@ class RewriteService {
 			return;
 		}
 
-		$svc = new self();
+		$svc = RewriteService::getInstance();
 
 		switch ($event) {
 
@@ -589,7 +590,7 @@ class RewriteService {
 			return;
 		}
 
-		$svc = \hypeJunction\Seo\RewriteService::getInstance();
+		$svc = RewriteService::getInstance();
 
 		$href = elgg_extract('href', $return);
 		$sef = $svc->getTargetUrl($href);
