@@ -459,6 +459,22 @@ class RewriteService {
 				'{date}' => gmdate("Y-m-d", $entity->time_created),
 			];
 			$sef_path = str_replace(array_keys($replacements), array_values($replacements), $pattern);
+
+			// Make sure SEF URL is unique and suffix if needed
+			$i = 1;
+			$suffix = '';
+			$unique = false;
+			while (!$unique) {
+				$sef_alt_data = $this->getRewriteRulesFromUri($sef_path . $suffix);
+				if ($sef_alt_data && !in_array($data['path'], $sef_alt_data['aliases'])) {
+					$suffix = "-$i";
+					$i++;
+					continue;
+				}
+				$unique = true;
+			}
+
+			$sef_path .= $suffix;
 			$data['sef_path'] = $sef_path;
 		}
 
