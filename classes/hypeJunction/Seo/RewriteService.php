@@ -403,7 +403,7 @@ class RewriteService {
 
 		$params = [':entity_guid' => (int) $guid];
 		$rows = get_data("
-			SELECT id FROM {$this->aliases_table}
+			SELECT id FROM {$this->table}
 			WHERE entity_guid = :entity_guid
 		", null, $params);
 
