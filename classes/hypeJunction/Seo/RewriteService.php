@@ -56,8 +56,8 @@ class RewriteService {
 	 */
 	public static function getInstance() {
 		if (is_null(self::$_instance)) {
-			$cache = is_memcache_available() ? new Memcache() : new FileCache();
-			self::$_instance = new self($cache);
+			$routes_cache = is_memcache_available() ? new Memcache() : new FileCache();
+			self::$_instance = new self($routes_cache);
 		}
 		return self::$_instance;
 	}
@@ -410,7 +410,7 @@ class RewriteService {
 
 		if ($aliases) {
 			foreach ($aliases as $alias) {
-				$this->cache->invalidate(sha1($alias->path));
+				$this->routes_cache->invalidate(sha1($alias->path));
 			}
 		}
 

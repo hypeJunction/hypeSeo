@@ -53,6 +53,8 @@ echo elgg_view_form('seo/search', [
 						'href' => elgg_http_add_url_query_elements('action/seo/delete', [
 							'uri' => $data['sef_path'],
 						]),
+						'is_action' => true,
+						'confirm' => true,
 					]);
 					?>
 				</td>
