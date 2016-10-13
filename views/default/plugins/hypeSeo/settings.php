@@ -1,6 +1,22 @@
 <?php
 
 $entity = elgg_extract('entity', $params);
+
+if (!isset($entity->inline_rewrites)) {
+	$entity->inline_rewrites = true;
+}
+
+echo elgg_view_input('select', [
+	'name' => 'params[inline_rewrites]',
+	'value' => $entity->inline_rewrites,
+	'options_values' => [
+		0 => elgg_echo('option:no'),
+		1 => elgg_echo('option:yes'),
+	],
+	'label' => elgg_echo('seo:settings:inline_rewrites'),
+	'help' => elgg_echo('seo:settings:inline_rewrites:help'),
+]);
+
 $svc = \hypeJunction\Seo\RewriteService::getInstance();
 
 $dbprefix = elgg_get_config('dbprefix');

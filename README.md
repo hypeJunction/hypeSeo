@@ -18,6 +18,10 @@ SEO Tools for Elgg
  * Once enabled, use autogen tool in plugin settings to autogenerate SEF urls for your entities
  * Extras menu contains a link to page SEO editor
 
+## Performance
+
+ * For best performance, enable and configure memcache on your Elgg installation
+
 ## Acknowledgements
 
 Initial development of the plugin was sponsored by Bodyology Virtual Campus http://bodyologymassagecourses.co.uk/

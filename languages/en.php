@@ -46,4 +46,10 @@ return [
 	'seo:autogen:success_count' => 'Processed: ',
 	'seo:autogen:error_count' => 'Errors: ',
 
+	'seo:settings:inline_rewrites' => 'Enable inline rewrites',
+	'seo:settings:inline_rewrites:help' => '
+		If enabled, this will rewrite all URLs on the page to their SEF version.
+		This can be a very resource intensive process, as there can be hundreds of URLs on the page.
+		If you notice that your site is slow, either configure Memcache, or disable this feature and rely on canonical link tags.
+	',
 ];

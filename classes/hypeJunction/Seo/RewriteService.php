@@ -2,9 +2,9 @@
 
 namespace hypeJunction\Seo;
 
+use Elgg\Cache\Pool;
 use ElggEntity;
 use ElggUser;
-use Flintstone\Flintstone;
 use stdClass;
 
 /**
@@ -12,28 +12,42 @@ use stdClass;
  */
 class RewriteService {
 
+	/**
+	 * @var self
+	 */
 	static $_instance;
-	
+
+	/**
+	 * @var string
+	 */
 	private $table;
+
+	/**
+	 * @var string
+	 */
 	private $aliases_table;
+
+	/**
+	 * @var string
+	 */
 	private $data_table;
 
 	/**
-	 * @var Flintstone
+	 * @var Pool
 	 */
 	private $routes_cache;
 
 	/**
 	 * Constructor
+	 *
+	 * @param Pool $routes_cache Cache
 	 */
-	public function __construct(Flintstone $routes_cache) {
+	public function __construct(Pool $routes_cache) {
 		$dbprefix = elgg_get_config('dbprefix');
 		$this->table = "{$dbprefix}sef_routes";
 		$this->aliases_table = "{$dbprefix}sef_aliases";
 		$this->data_table = "{$dbprefix}sef_data";
-
 		$this->routes_cache = $routes_cache;
-		self::$_instance = $this;
 	}
 
 	/**
@@ -41,31 +55,28 @@ class RewriteService {
 	 * @return self
 	 */
 	public static function getInstance() {
-		if (!is_null(self::$_instance)) {
-			return self::$_instance;
+		if (is_null(self::$_instance)) {
+			$cache = is_memcache_available() ? new Memcache() : new FileCache();
+			self::$_instance = new self($cache);
 		}
-		$options =[
-			'dir' => elgg_get_config('dataroot'),
-		];
-		$flinstone = new Flintstone('sef_routes', $options);
-		return new self($flinstone);
+		return self::$_instance;
 	}
 
 	/**
 	 * Get SEF equivalent for a given URL
 	 *
-	 * @param string $url URL
+	 * @param string $url    URL
 	 * @return string|false
 	 */
 	public function getTargetUrl($url = '') {
 
-		$path = $this->normalizeUri($url);
-		if (!$path) {
-			return false;
+		$data = $this->getRewriteRulesFromUri($url);
+		
+		$target = false;
+		if (!empty($data['sef_path'])) {
+			$target = $data['sef_path'];
 		}
 
-		$hash = sha1($path);
-		$target = $this->routes_cache->get($hash);
 		return $target ? elgg_normalize_url($target) : false;
 	}
 
@@ -101,6 +112,12 @@ class RewriteService {
 			return false;
 		}
 
+		$hash = sha1($path);
+		$data = $this->routes_cache->get($hash);
+		if ($data) {
+			return $data;
+		}
+
 		$query = "
 			SELECT rt.*,
 				   ri.*,
@@ -124,7 +141,7 @@ class RewriteService {
 
 		foreach ($data[0]['aliases'] as $alias) {
 			$hash = sha1($alias);
-			$this->routes_cache->set($hash, $data[0]['sef_path']);
+			$this->routes_cache->put($hash, $data[0]);
 		}
 
 		return $data[0];
@@ -269,11 +286,19 @@ class RewriteService {
 
 		$data['path'] = $this->normalizeUri($data['path']);
 		$data['sef_path'] = $this->normalizeUri($data['sef_path']);
+
+		$data['aliases'][] = $data['path'];
+		$data['aliases'][] = $data['sef_path'];
 		$data['aliases'] = array_unique($data['aliases']);
+		
 		if ($data['metatags']) {
 			$data['metatags'] = serialize($data['metatags']);
 		}
 
+		foreach ($data['aliases'] as $alias) {
+			$this->routes_cache->invalidate(sha1($alias));
+		}
+		
 		$params = [
 			':path' => (string) $data['path'],
 			':sef_path' => (string) $data['sef_path'],
@@ -361,7 +386,7 @@ class RewriteService {
 				insert_data($query, $params);
 
 				$hash = sha1($alias);
-				$this->routes_cache->set($hash, $data['sef_path']);
+				$this->routes_cache->put($hash, $data);
 			}
 		}
 
@@ -450,7 +475,7 @@ class RewriteService {
 		}
 
 		if ($data['custom'] != 'yes') {
-			$title = $entity->getDisplayName() ? : $entity->description;
+			$title = $entity->getDisplayName() ?: $entity->description;
 			$replacements = [
 				'{guid}' => $entity->guid,
 				'{title}' => elgg_get_friendly_title(elgg_get_excerpt($title, 50)),
@@ -477,9 +502,6 @@ class RewriteService {
 			$sef_path .= $suffix;
 			$data['sef_path'] = $sef_path;
 		}
-
-		$data['aliases'][] = $path;
-		$data['aliases'][] = $sef_path;
 
 		return $data;
 	}
@@ -606,11 +628,17 @@ class RewriteService {
 			return;
 		}
 
+		if (!elgg_get_plugin_setting('inline_rewrites', 'hypeSeo', true)) {
+			return;
+		}
+		
 		$svc = RewriteService::getInstance();
 
 		$href = elgg_extract('href', $return);
-		$sef = $svc->getTargetUrl($href);
 
+		// Not using DB here, as it is way too heavy on performance
+		$sef = $svc->getTargetUrl($href, false);
+		
 		if ($sef) {
 			$return['href'] = $sef;
 			$return['is_trusted'] = true;
