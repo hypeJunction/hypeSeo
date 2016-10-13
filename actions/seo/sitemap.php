@@ -1,8 +1,10 @@
 <?php
 
+use hypeJunction\Seo\RewriteService;
+
 set_time_limit(0);
 
-$svc = \hypeJunction\Seo\RewriteService::getInstance();
+$svc = RewriteService::getInstance();
 
 $sitemaps = elgg_get_plugin_setting('sitemaps', 'hypeSeo');
 if (!$sitemaps) {
@@ -11,21 +13,21 @@ if (!$sitemaps) {
 	$sitemaps = unserialize($sitemaps);
 }
 
-$sitemaps = [];
-
 foreach ($sitemaps as $name) {
-	$file = new \ElggFile();
+	$file = new ElggFile();
 	$file->owner_guid = elgg_get_site_entity()->guid;
 	$file->setFilename("sitemaps/$name.xml");
 	$file->delete();
 }
+
+$sitemap = [];
 
 $save_sitemap = function($filename, $urls) {
 	$xml = elgg_view('seo/sitemap/urlset', [
 		'urls' => $urls,
 	]);
 
-	$file = new \ElggFile();
+	$file = new ElggFile();
 	$file->owner_guid = elgg_get_site_entity()->guid;
 	$file->setFilename("sitemaps/$filename");
 	$file->open('write');
@@ -56,7 +58,7 @@ foreach ($names as $name) {
 		}
 	} else {
 		list($type, $subtype) = explode(':', $name);
-		$entities = new \ElggBatch('elgg_get_entities', [
+		$entities = new ElggBatch('elgg_get_entities', [
 			'type' => $type,
 			'subtype' => $subtype ?: ELGG_ENTITIES_ANY_VALUE,
 			'limit' => 0,
@@ -97,7 +99,7 @@ foreach ($names as $name) {
 	if (!empty($urls)) {
 		$sitemaps[$filename] = $save_sitemap($filename, $urls);
 	}
-	
+
 }
 
 
@@ -105,7 +107,7 @@ $xml = elgg_view('seo/sitemap/sitemapindex', [
 	'sitemaps' => $sitemaps,
 ]);
 
-$file = new \ElggFile();
+$file = new ElggFile();
 $file->owner_guid = elgg_get_site_entity()->guid;
 $file->setFilename("sitemaps/index.xml");
 $file->open('write');
