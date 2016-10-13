@@ -60,9 +60,10 @@ class Router {
 			return;
 		}
 
-		if (elgg_normalize_url($sef_path) !== $url) {
-			forward($sef_path);
-		}
+		// Instead of issuing a redirect, we will use <link rel="canonical">
+		//if (elgg_normalize_url($sef_path) !== $url) {
+		//	forward($sef_path);
+		//}
 
 		list($route, $guid) = explode('/', trim($original_path, '/'));
 

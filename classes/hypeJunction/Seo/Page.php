@@ -17,13 +17,22 @@ class Page {
 
 		$svc = RewriteService::getInstance();
 
-		$data = $svc->getRewriteRulesFromUri(current_page_url());
+		$url = current_page_url();
+		$data = $svc->getRewriteRulesFromUri($url);
 		if (!$data) {
 			return;
 		}
 
 		$data = $svc->normalizeData($data);
 
+		$sef_path = elgg_extract('sef_path', $data);
+		if (elgg_normalize_url($sef_path) != $url) {
+			$return['links']['canonical'] =[
+				'rel' => 'canonical',
+				'href' => elgg_normalize_url($sef_path),
+			];
+		}
+		
 		$title = elgg_extract('title', $data);
 		$description = elgg_extract('description', $data);
 		$keywords = elgg_extract('keywords', $data);

@@ -1,6 +1,6 @@
 <?php
 
-$entity = elgg_extract('entity', $params);
+$entity = elgg_extract('entity', $vars);
 
 if (!isset($entity->inline_rewrites)) {
 	$entity->inline_rewrites = true;
