@@ -27,12 +27,12 @@ class Page {
 
 		$sef_path = elgg_extract('sef_path', $data);
 		if (elgg_normalize_url($sef_path) != $url) {
-			$return['links']['canonical'] =[
+			$return['links']['canonical'] = [
 				'rel' => 'canonical',
 				'href' => elgg_normalize_url($sef_path),
 			];
 		}
-		
+
 		$title = elgg_extract('title', $data);
 		$description = elgg_extract('description', $data);
 		$keywords = elgg_extract('keywords', $data);
@@ -78,6 +78,20 @@ class Page {
 		}
 
 		return $return;
+	}
+
+	/**
+	 * Point robots to sitemap.xml
+	 *
+	 * @param string $hook   "robots.txt"
+	 * @param string $type   "site"
+	 * @param array  $return robots.txt
+	 * @param array  $params Hook params
+	 * @return array
+	 */
+	public static function configureRobots($hook, $type, $return, $params) {
+		$text .= PHP_EOL . "Sitemap: " . elgg_normalize_url('sitemap.xml') . PHP_EOL;
+		return $text;
 	}
 
 }

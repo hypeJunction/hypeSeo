@@ -2,6 +2,8 @@
 
 namespace hypeJunction\Seo;
 
+use ElggFile;
+
 /**
  * @access private
  */
@@ -22,9 +24,47 @@ class Router {
 			case 'edit' :
 				echo elgg_view_resource('seo/edit');
 				return true;
+
+			case 'sitemaps' :
+				$filename = array_shift($segments);
+
+				$file = new ElggFile();
+				$file->owner_guid = elgg_get_site_entity()->guid;
+				$file->setFilename("sitemaps/$filename");
+
+				if (!$file->exists()) {
+					return;
+				}
+
+				header('Content-Type: application/xml', true);
+				
+				$file->open('read');
+				echo $file->grabFile();
+				$file->close();
+				exit;
 		}
 
 		return false;
+	}
+
+
+	/**
+	 * Route sitemap.xml
+	 *
+	 * @param string $hook   "route:rewrite"
+	 * @param string $type   "sitemap.xml"
+	 * @param array  $return Segments and handler
+	 * @param array  $params Hook params
+	 * @return array
+	 */
+	public static function rewriteSitemapRoute($hook, $type, $return, $params) {
+		return [
+			'identifier' => 'seo',
+			'segments' => [
+				'sitemaps',
+				'index.xml',
+			]
+		];
 	}
 
 	/**

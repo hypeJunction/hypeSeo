@@ -8,6 +8,7 @@ SEO Tools for Elgg
  * Autogenerate SEF URLs for all site entities with predefined rewrite patterns
  * Add custom title, description, keywords and other meta tags to any page
  * Integrates with hypeDiscovery to populate open graph metatags
+ * `sitemap.xml` generator
 
 ![Dashboard](https://raw.github.com/hypeJunction/hypeSeo/master/screenshots/seo.png "Dashboard")
 ![Patterns](https://raw.github.com/hypeJunction/hypeSeo/master/screenshots/patterns.png "Patterns")

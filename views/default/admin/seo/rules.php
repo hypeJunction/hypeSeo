@@ -1,7 +1,5 @@
 <?php
 
-echo elgg_view('admin/seo/autogen');
-
 $limit = get_input('limit', 25);
 $offset = get_input('offset', 0);
 

@@ -23,6 +23,7 @@ elgg_register_event_handler('init', 'system', function() {
 	elgg_register_action('seo/autogen', __DIR__ . '/actions/seo/autogen.php', 'admin');
 	elgg_register_action('seo/edit', __DIR__ . '/actions/seo/edit.php', 'admin');
 	elgg_register_action('seo/delete', __DIR__ . '/actions/seo/delete.php', 'admin');
+	elgg_register_action('seo/sitemap', __DIR__ . '/actions/seo/sitemap.php', 'admin');
 
 	elgg_register_event_handler('create', 'all', [RewriteService::class, 'updateEntityRewriteRules']);
 	elgg_register_event_handler('update', 'all', [RewriteService::class, 'updateEntityRewriteRules']);
@@ -31,13 +32,23 @@ elgg_register_event_handler('init', 'system', function() {
 	elgg_register_plugin_hook_handler('view_vars', 'output/url', [RewriteService::class, 'rewriteInlineUrls']);
 
 	elgg_register_plugin_hook_handler('head', 'page', [Page::class, 'setHeadMeta']);
+	elgg_register_plugin_hook_handler('robots.txt', 'site', [Page::class, 'configureRobots']);
 
 	elgg_register_plugin_hook_handler('register', 'menu:extras', [Menus::class, 'setupExtrasMenu']);
+
 
 	elgg_register_menu_item('page', array(
 		'name' => 'seo:settings',
 		'href' => 'admin/plugin_settings/hypeSeo',
 		'text' => elgg_echo('admin:seo:settings'),
+		'context' => 'admin',
+		'section' => 'seo'
+	));
+
+	elgg_register_menu_item('page', array(
+		'name' => 'seo:generator',
+		'href' => 'admin/seo/generator',
+		'text' => elgg_echo('admin:seo:generator'),
 		'context' => 'admin',
 		'section' => 'seo'
 	));
@@ -49,9 +60,18 @@ elgg_register_event_handler('init', 'system', function() {
 		'context' => 'admin',
 		'section' => 'seo'
 	));
+
+	elgg_register_menu_item('page', array(
+		'name' => 'seo:sitemap',
+		'href' => 'admin/seo/sitemap',
+		'text' => elgg_echo('admin:seo:sitemap'),
+		'context' => 'admin',
+		'section' => 'seo'
+	));
 });
 
 elgg_register_plugin_hook_handler('route:rewrite', 'all', [Router::class, 'enforceRewriteRules'], 1);
+elgg_register_plugin_hook_handler('route:rewrite', 'sitemap.xml', [Router::class, 'rewriteSitemapRoute'], 1);
 
 elgg_register_event_handler('upgrade', 'system', function() {
 	if (!elgg_is_admin_logged_in()) {

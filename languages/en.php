@@ -38,6 +38,8 @@ return [
 	'admin:seo' => 'Search engine optimization',
 	'admin:seo:settings' => 'Settings',
 	'admin:seo:rules' => 'Rewrite Rules',
+	'admin:seo:generator' => 'Rule Generator',
+	'admin:seo:sitemap' => 'Sitemap',
 	'seo:delete:success' => 'Rule has been deleted',
 	'seo:delete:error' => 'Rule could not been deleted',
 
@@ -52,4 +54,16 @@ return [
 		This can be a very resource intensive process, as there can be hundreds of URLs on the page.
 		If you notice that your site is slow, either configure Memcache, or disable this feature and rely on canonical link tags.
 	',
+
+	'seo:sitemap:help' => 'Below you can configure how static and dynamic URL should appear in the sitemap',
+
+	'seo:sitemap:error' => 'Your site is in a walled garden mode. Install hypeDiscovery to generate a sitemap',
+	
+	'seo:sitemap:static' => 'Static pages',
+	'seo:sitemap:generate' => 'Generate sitemap',
+	'seo:sitemap:urls' => 'URLs',
+	'seo:sitemap:priority' => 'Priority',
+	'seo:sitemap:changefreq' => 'Change Frequency',
+	'seo:sitemap:location' => 'Sitemap location: %s',
+	'seo:sitemap:generate:success' => 'Sitemap has been successfully generated',
 ];
