@@ -402,14 +402,26 @@ class RewriteService {
 	public function deleteData($id = 0) {
 
 		$params = [':id' => (int) $id];
+
+		$aliases = get_data("
+			SELECT path FROM {$this->aliases_table}
+			WHERE route_id = :id
+		", null, $params);
+
+		if ($aliases) {
+			foreach ($aliases as $alias) {
+				$this->cache->invalidate(sha1($alias->path));
+			}
+		}
+
 		delete_data("
 			DELETE FROM {$this->aliases_table}
-			WHERE id = :id
+			WHERE route_id = :id
 		", $params);
 
 		delete_data("
 			DELETE FROM {$this->data_table}
-			WHERE id = :id
+			WHERE route_id = :id
 		", $params);
 
 		return delete_data("
