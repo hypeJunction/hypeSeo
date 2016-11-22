@@ -55,6 +55,13 @@ return [
 		If you notice that your site is slow, either configure Memcache, or disable this feature and rely on canonical link tags.
 	',
 
+	'seo:settings:redirect_to_canonical' => 'Enable redirects',
+	'seo:settings:redirect_to_canonical:help' => '
+		SEF URLs are treated as canonical and by default pages accessed via a non-SEF URL will receive a canonical link tag in the HTML head,
+		which will be sufficient for search engines to link the pages (the URL in the browser address bar will not point to the SEF URL).
+		If you enalbe redirects, whenever a page is accessed via a non-SEF URL, the browser will be forwarded to the canonical/SEF URL.
+	',
+
 	'seo:sitemap:help' => 'Below you can configure how static and dynamic URL should appear in the sitemap',
 
 	'seo:sitemap:error' => 'Your site is in a walled garden mode. Install hypeDiscovery to generate a sitemap',

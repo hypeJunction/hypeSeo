@@ -100,12 +100,11 @@ class Router {
 			return;
 		}
 
-		// Instead of issuing a redirect, we will use <link rel="canonical">
-		//if (elgg_normalize_url($sef_path) !== $url) {
-		//	forward($sef_path);
-		//}
+		if (elgg_normalize_url($sef_path) !== $url && elgg_get_plugin_setting('redirect_to_canonical', 'hypeSeo')) {
+			forward($sef_path);
+		}
 
-		list($route, $guid) = explode('/', trim($original_path, '/'));
+		//list($route, $guid) = explode('/', trim($original_path, '/'));
 
 		$segments = explode('/', trim($original_path, '/'));
 		$identifier = array_shift($segments);

@@ -17,6 +17,17 @@ echo elgg_view_input('select', [
 	'help' => elgg_echo('seo:settings:inline_rewrites:help'),
 ]);
 
+echo elgg_view_input('select', [
+	'name' => 'params[redirect_to_canonical]',
+	'value' => $entity->redirect_to_canonical,
+	'options_values' => [
+		0 => elgg_echo('option:no'),
+		1 => elgg_echo('option:yes'),
+	],
+	'label' => elgg_echo('seo:settings:redirect_to_canonical'),
+	'help' => elgg_echo('seo:settings:redirect_to_canonical:help'),
+]);
+
 $svc = \hypeJunction\Seo\RewriteService::getInstance();
 
 $dbprefix = elgg_get_config('dbprefix');
