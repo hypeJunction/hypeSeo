@@ -1,3 +1,13 @@
+<a name="1.0.2"></a>
+## [1.0.2](https://github.com/hypeJunction/hypeSeo/compare/1.0.1...v1.0.2) (2017-06-15)
+
+
+### Bug Fixes
+
+* **releases:** fix typo in package name ([6f0523d](https://github.com/hypeJunction/hypeSeo/commit/6f0523d))
+
+
+
 <a name="1.0.1"></a>
 ## [1.0.1](https://github.com/hypeJunction/hypeSeo/compare/1.0.0...v1.0.1) (2017-03-15)
 
