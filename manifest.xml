@@ -23,6 +23,11 @@
 		<name>hypeDiscovery</name>
 	</suggests>
 
+    <suggests>
+        <type>plugin</type>
+        <name>trusted_users</name>
+    </suggests>
+
 	<provides>
 		<type>plugin</type>
 		<name>seo</name>

@@ -36,6 +36,10 @@ elgg_register_event_handler('init', 'system', function() {
 
 	elgg_register_plugin_hook_handler('register', 'menu:extras', [Menus::class, 'setupExtrasMenu']);
 
+	$subtypes = get_registered_entity_types('object');
+	foreach ($subtypes as $subtype) {
+		elgg_register_plugin_hook_handler('view', "object/$subtype", [\hypeJunction\Seo\RelFollow::class, 'trustLinksInContent']);
+	}
 
 	elgg_register_menu_item('page', array(
 		'name' => 'seo:settings',

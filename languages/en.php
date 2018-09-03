@@ -62,6 +62,9 @@ return [
 		If you enalbe redirects, whenever a page is accessed via a non-SEF URL, the browser will be forwarded to the canonical/SEF URL.
 	',
 
+	'seo:settings:rel_follow' => 'Follow links by trusted users',
+	'seo:settings:rel_follow:help' => 'Always trust links that are present in content posted by trusted users. Enabling this feature will remove rel="nofollow" from items posted by admins and other trusted users (defined by trusted_users plugin)',
+
 	'seo:sitemap:help' => 'Below you can configure how static and dynamic URL should appear in the sitemap',
 
 	'seo:sitemap:error' => 'Your site is in a walled garden mode. Install hypeDiscovery to generate a sitemap',

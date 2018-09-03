@@ -454,10 +454,10 @@ class RewriteService {
 	/**
 	 * Prepare entity SEF data
 	 *
-	 * @param ElggEntity$entity Entity
+	 * @param ElggEntity $entity Entity
 	 * @return array|false
 	 */
-	public function prepareEntityData(ElggEntity$entity) {
+	public function prepareEntityData(ElggEntity $entity) {
 
 		if (!$entity->guid) {
 			return;

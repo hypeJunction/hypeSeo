@@ -93,5 +93,4 @@ class Page {
 		$return .= PHP_EOL . "Sitemap: " . elgg_normalize_url('sitemap.xml') . PHP_EOL;
 		return $return;
 	}
-
 }

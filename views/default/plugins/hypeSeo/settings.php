@@ -28,6 +28,17 @@ echo elgg_view_input('select', [
 	'help' => elgg_echo('seo:settings:redirect_to_canonical:help'),
 ]);
 
+echo elgg_view_input('select', [
+	'name' => 'params[rel_follow]',
+	'value' => $entity->rel_follow,
+	'options_values' => [
+		0 => elgg_echo('option:no'),
+		1 => elgg_echo('option:yes'),
+	],
+	'label' => elgg_echo('seo:settings:rel_follow'),
+	'help' => elgg_echo('seo:settings:rel_follow:help'),
+]);
+
 $svc = \hypeJunction\Seo\RewriteService::getInstance();
 
 $dbprefix = elgg_get_config('dbprefix');
