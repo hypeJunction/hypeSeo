@@ -1,3 +1,19 @@
+<a name="1.1.0"></a>
+# [1.1.0](https://github.com/hypeJunction/hypeSeo/compare/1.0.2...v1.1.0) (2018-09-03)
+
+
+### Bug Fixes
+
+* **robots:** correctly append sitemap path to robots ([10cc708](https://github.com/hypeJunction/hypeSeo/commit/10cc708))
+* **sitemap:** do not add non-public pages to sitemap if nocrawl is on ([7e15458](https://github.com/hypeJunction/hypeSeo/commit/7e15458))
+
+### Features
+
+* **links:** follow links by trusted users ([9dd606b](https://github.com/hypeJunction/hypeSeo/commit/9dd606b))
+* **sef:** allow admins to define custom rewrite rules ([1752e50](https://github.com/hypeJunction/hypeSeo/commit/1752e50))
+
+
+
 <a name="1.0.2"></a>
 ## [1.0.2](https://github.com/hypeJunction/hypeSeo/compare/1.0.1...v1.0.2) (2017-06-15)
 
