@@ -22,7 +22,7 @@ foreach ($sitemaps as $name) {
 
 $sitemap = [];
 
-$save_sitemap = function($filename, $urls) {
+$save_sitemap = function ($filename, $urls) {
 	$xml = elgg_view('seo/sitemap/urlset', [
 		'urls' => $urls,
 	]);
@@ -60,17 +60,19 @@ foreach ($names as $name) {
 		list($type, $subtype) = explode(':', $name);
 		$entities = new ElggBatch('elgg_get_entities', [
 			'type' => $type,
-			'subtype' => $subtype ?: ELGG_ENTITIES_ANY_VALUE,
+			'subtype' => $subtype ? : ELGG_ENTITIES_ANY_VALUE,
 			'limit' => 0,
 		]);
 
 		$index = 1;
 		foreach ($entities as $entity) {
-			if (elgg_is_active_plugin('hypeDiscovery')) {
-				$discoverable = hypeJunction\Discovery\is_discoverable($entity);
-			} else {
-				$discoverable = $entity->access_id == ACCESS_PUBLIC;
+			$discoverable = $entity->access_id == ACCESS_PUBLIC;
+
+			if (!$discoverable && elgg_is_active_plugin('hypeDiscovery')) {
+				$discoverable = hypeJunction\Discovery\is_discoverable($entity)
+					&& !elgg_get_plugin_setting('nocrawl', 'hypeDiscovery');
 			}
+
 			if (!$discoverable) {
 				continue;
 			}
