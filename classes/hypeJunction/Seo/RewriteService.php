@@ -212,6 +212,11 @@ class RewriteService {
 		$limit = (int) elgg_extract('limit', $options, 25);
 		$offset = (int) elgg_extract('offset', $options, 0);
 
+		$where = '(1 = 1)';
+		$uri = elgg_extract('uri', $options);
+		if ($uri) {
+			$where = '(rt.path LIKE :path OR rt.sef_path LIKE :path OR at.path LIKE :path)';
+		}
 		$query = "
 			SELECT rt.*,
 				   ri.*,
@@ -219,13 +224,16 @@ class RewriteService {
 			FROM {$this->table} AS rt
 			JOIN {$this->data_table} AS ri ON ri.route_id = rt.id
 			JOIN {$this->aliases_table} at ON at.route_id = rt.id
+			WHERE $where
 			GROUP BY at.route_id
 			ORDER BY rt.path
 			LIMIT $offset,$limit
 		";
 
 		$callback = [$this, 'rowToSefData'];
-		$data = get_data($query, $callback);
+		$data = get_data($query, $callback, [
+			':path' => "%{$uri}%",
+		]);
 
 		if (!$data) {
 			return false;

@@ -14,7 +14,7 @@ return [
 	'seo:metatags' => 'Page Metatags',
 	'seo:edit:success' => 'Page data has been saved successfully',
 	'seo:edit:error' => 'Page data could not be saved',
-	'seo:search:path' => 'URL or path',
+	'seo:search:path' => 'Find rules by URL or path',
 	'seo:edit:not_unique' => 'Target path must be unique, there is already another rewrite rule with this SEF path',
 	
 	'seo:object' => 'Articles',
@@ -38,6 +38,7 @@ return [
 	'admin:seo' => 'Search engine optimization',
 	'admin:seo:settings' => 'Settings',
 	'admin:seo:rules' => 'Rewrite Rules',
+	'admin:seo:add_rule' => 'Add custom rule',
 	'admin:seo:generator' => 'Rule Generator',
 	'admin:seo:sitemap' => 'Sitemap',
 	'seo:delete:success' => 'Rule has been deleted',

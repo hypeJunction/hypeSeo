@@ -34,7 +34,8 @@ foreach (['path', 'sef_path', 'title', 'description', 'keywords'] as $key) {
 	}
 }
 
-foreach ($data['metatags'] as $key => $value) {
+$metatags = elgg_extract('metatags', $data, []);
+foreach ($metatags as $key => $value) {
 	$sef_data['metatags'][$key] = $value;
 }
 

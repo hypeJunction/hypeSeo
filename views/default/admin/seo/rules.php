@@ -1,5 +1,11 @@
 <?php
 
+echo elgg_view('output/url', [
+    'href' => 'admin/seo/add_rule',
+    'text' => elgg_echo('admin:seo:add_rule'),
+    'class' => 'elgg-button elgg-button-action',
+]);
+
 $limit = get_input('limit', 25);
 $offset = get_input('offset', 0);
 
@@ -9,11 +15,14 @@ $rules = new \ElggBatch([$svc, 'getRewriteRules'], [
 	'offset' => $offset,
 	'uri' => get_input('uri'),
 ]);
+
 echo elgg_view_form('seo/search', [
 	'disable_security' => true,
 	'method' => 'GET',
 	'action' => current_page_url(),
+    'class' => 'seo-search-form'
 ]);
+
 ?>
 <table class="elgg-table">
 	<thead>
@@ -106,5 +115,5 @@ echo elgg_view_form('seo/search', [
 echo elgg_view('navigation/pagination', [
 	'limit' => $limit,
 	'offset' => $offset,
-	'count' => $svc->countRewriteRules(),
+	'count' => $rules->count(),
 ]);
