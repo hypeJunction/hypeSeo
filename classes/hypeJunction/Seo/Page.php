@@ -90,8 +90,8 @@ class Page {
 	 * @return array
 	 */
 	public static function configureRobots($hook, $type, $return, $params) {
-		$text .= PHP_EOL . "Sitemap: " . elgg_normalize_url('sitemap.xml') . PHP_EOL;
-		return $text;
+		$return .= PHP_EOL . "Sitemap: " . elgg_normalize_url('sitemap.xml') . PHP_EOL;
+		return $return;
 	}
 
 }
