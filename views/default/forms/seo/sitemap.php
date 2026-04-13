@@ -77,24 +77,17 @@ $mod .= elgg_view_input('select', [
 
 echo elgg_view_module('aside', $title, $mod);
 
-$dbprefix = elgg_get_config('dbprefix');
-$sql = "
-	SELECT *
-	FROM {$dbprefix}entity_subtypes
-	ORDER BY subtype
-";
-
-$rows = get_data($sql);
-
+// Elgg 3.x dropped the entity_subtypes table; subtypes live in the
+// registered entities map instead.
 $options = [
 	'user:' => elgg_echo('item:user'),
 	'group:' => elgg_echo('item:group'),
 ];
 
-foreach ($rows as $row) {
-	$type = $row->type;
-	$subtype = $row->subtype;
-	$options["$type:$subtype"] = elgg_echo("item:$type:$subtype");
+foreach ((array) get_registered_entity_types() as $type => $subtypes) {
+	foreach ((array) $subtypes as $subtype) {
+		$options["$type:$subtype"] = elgg_echo("item:$type:$subtype");
+	}
 }
 
 asort($options);
