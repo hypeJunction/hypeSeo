@@ -1,4 +1,4 @@
-# hypeSeo plugin architecture (Elgg 3.x)
+# hypeSeo plugin architecture (Elgg 4.x)
 
 Search-engine optimisation tools for Elgg: SEF URL rewriting, sitemap
 generation, configurable per-entity URL patterns, OGP/meta tags, and
@@ -8,38 +8,39 @@ admin-controlled `rel="nofollow"` stripping for trusted users.
 
 ```
 hypeseo/
-├── manifest.xml              metadata (still read in 3.x)
-├── composer.json             plugin metadata + flintstone dep
-├── start.php                 init hook + route:rewrite hooks
-├── activate.php              creates the sef_* tables on activation
+├── composer.json             plugin metadata + flintstone dep (sole metadata source in 4.x)
+├── elgg-plugin.php           declarative config (actions, routes, hooks, events, view extensions, plugin key, bootstrap)
 ├── autoloader.php            optional vendor/ autoload shim
-├── install/mysql.sql         schema for sef_routes / sef_aliases / sef_data
 ├── classes/hypeJunction/Seo/
+│   ├── Bootstrap.php         extends DefaultPluginBootstrap — activate() creates sef_* tables, init() registers menu items + per-subtype view/object/<subtype> hooks
 │   ├── Cache.php             local cache contract (replaces removed \Elgg\Cache\Pool)
 │   ├── FileCache.php         Flintstone-backed Cache implementation
-│   ├── RewriteService.php    DB CRUD + cache for SEF lookups (singleton)
+│   ├── RewriteService.php    DB CRUD via elgg()->db->* + cache for SEF lookups (singleton)
 │   ├── Router.php            route:rewrite hook handlers (enforce, sitemap.xml)
 │   ├── Page.php              head / robots.txt hook handlers
 │   ├── Menus.php             menu:extras hook handler
 │   └── RelFollow.php         object/<subtype> view hook — strips rel=nofollow
-├── actions/seo/              autogen / edit / delete / sitemap (admin only)
+├── actions/seo/              autogen / edit / delete / sitemap (admin only) — return ResponseBuilder
 ├── views/default/
-│   ├── resources/seo.php     resource view for /seo/{segments} (3.x route)
-│   ├── resources/seo/edit.php   inline edit dialog
-│   ├── admin/seo/            admin pages (settings, generator, rules, sitemap)
-│   ├── forms/seo/            edit / search / sitemap forms
-│   ├── plugins/hypeSeo/settings.php   plugin settings UI
+│   ├── resources/
+│   │   ├── seo.php           /seo/{segments} resource view (4.x named route)
+│   │   ├── seo/edit.php      inline edit dialog
+│   │   └── admin/seo/        4.x admin route shims (generator/rules/sitemap/add_rule)
+│   ├── admin/seo/            admin page bodies (settings, generator, rules, sitemap)
+│   ├── forms/seo/            edit / search / sitemap / add_rule forms
+│   ├── plugins/hypeseo/settings.php   plugin settings UI (lowercase dir matches plugin id)
 │   └── seo/sitemap/          sitemap XML view templates
 └── tests/                    pre-migration baseline (phpunit + playwright)
 ```
 
-## Registered hooks/events (start.php)
+## Registered hooks/events (elgg-plugin.php)
 
-Inside the `init/system` event closure:
+Declared in `elgg-plugin.php` (Elgg 4.x declarative config) — no init closure:
 
 | Kind | Identifier | Handler |
 |------|------------|---------|
 | route | `seo` | `/seo/{segments}` → `views/default/resources/seo.php` |
+| route | `admin:seo:{generator,rules,sitemap,add_rule}` | gated by `AdminGatekeeper` middleware → resource shims under `views/default/resources/admin/seo/` |
 | action | `seo/autogen` | `actions/seo/autogen.php` (admin) |
 | action | `seo/edit` | `actions/seo/edit.php` (admin) |
 | action | `seo/delete` | `actions/seo/delete.php` (admin) |
@@ -55,18 +56,17 @@ Inside the `init/system` event closure:
 | view extension | `elgg.css`, `admin.css` | `seo.css` |
 | menu items | `page` (admin section: `seo`) | settings, generator, rules, sitemap |
 
-Outside the init closure:
+Registered runtime via `Bootstrap::init()` (declarative config can't express these):
 
-| Kind | Identifier | Handler |
-|------|------------|---------|
-| hook | `route:rewrite / all` | `Router::enforceRewriteRules` (priority 1) |
-| hook | `route:rewrite / sitemap.xml` | `Router::rewriteSitemapRoute` (priority 1) |
+- 4 admin page menu items (`elgg_register_menu_item('page', ...)`)
+- `view / object/<subtype>` hooks looped over every registered object subtype → `RelFollow::trustLinksInContent`
 
 ## Database schema (custom)
 
-Created in `activate.php` from `install/mysql.sql`. Three custom tables
-(MyISAM in the original 2.x schema; left as-is for 3.x — they continue
-to work alongside Elgg's InnoDB defaults):
+Created on plugin activation by `Bootstrap::activate()`, which inlines
+the DDL via `elgg()->db->updateData()` (the legacy
+`activate.php` + `run_sql_script()` pair was removed in Elgg 4.x).
+Three custom tables (now InnoDB / utf8mb4):
 
 - `{prefix}sef_routes(id, path, sef_path, entity_guid, custom)` — primary lookup
 - `{prefix}sef_aliases(route_id, path)` — alias paths that map to a route

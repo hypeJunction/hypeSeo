@@ -1,3 +1,28 @@
+<a name="3.0.0"></a>
+# 3.0.0 (2026-04-13)
+
+### Breaking Changes
+
+* **elgg:** raise minimum to Elgg 4.x (PHP 7.4+). Plugins on Elgg 3.x must stay on hypeSeo 2.0.0.
+
+### Migration (3.x → 4.x)
+
+* **bootstrap:** delete `start.php`, `activate.php`, `manifest.xml`, `install/mysql.sql`. Plugin metadata now lives in `composer.json` + `elgg-plugin.php` only.
+* **plugin id:** lowercased plugin id from `hypeSeo` to `hypeseo` everywhere — plugin settings calls, the views/default/plugins/ subdir, composer name. The plugin directory was already lowercase.
+* **bootstrap class:** introduced `hypeJunction\Seo\Bootstrap` extending `DefaultPluginBootstrap`. `activate()` recreates the SEF tables via `elgg()->db->updateData()` (replaces `run_sql_script`). `init()` registers the four admin page menu items and per-subtype `view/object/<subtype>` hooks (declarative config can't express these).
+* **declarative config:** `elgg-plugin.php` now holds actions, routes, hooks, events, view extensions. Hook/event handler signatures rewritten to single-arg `\Elgg\Hook` / `\Elgg\Event` form.
+* **db:** rewrote all `RewriteService` raw SQL helpers — `get_data`/`get_data_row`/`insert_data`/`update_data`/`delete_data` → `elgg()->db->getData()`/`getDataRow()`/`insertData()`/`updateData()`/`deleteData()`.
+* **actions:** `forward(REFERRER)` + `system_message()` / `register_error()` rewritten to return `elgg_ok_response()` / `elgg_error_response()`. `elgg_set_plugin_setting()` → `elgg_get_plugin_from_id('hypeseo')->setSetting()`.
+* **admin routes:** added explicit named routes (`admin:seo:{generator,rules,sitemap,add_rule}`) gated by `\Elgg\Router\Middleware\AdminGatekeeper` — auto-discovery of plugin admin paths is gone in 4.x.
+* **views:** swapped 19 `elgg_view_input('<type>', $vars)` calls to `elgg_view('input/<type>', $vars)` — the helper was removed in 4.x.
+
+### Tests
+
+* PHPUnit unit suite (7 tests, 16 assertions) green on Elgg 4.x.
+* Playwright smoke suite (7 tests) green on Elgg 4.x.
+
+
+
 <a name="2.0.0"></a>
 # 2.0.0 (2026-04-13)
 
