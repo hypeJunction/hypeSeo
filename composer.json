@@ -1,25 +1,31 @@
 {
-	"name": "hypejunction/hypeseo",
-	"version": "1.1.0",
-	"type": "elgg-plugin",
-	"description": "SEO Tools",
-	"homepage": "http://hypejunction.com",
-	"keywords": [
-		"elgg", "plugin", "seo", "search engine optimization", "open graph", "twitter cards", "analytics"
-	],
-	"license": "GPL-2.0",
-	"authors": [
-		{
-			"name": "Ismayil Khayredinov",
-			"email": "info@hypejunction.com"
-		}
-	],
-	"extra": {
-		"installer-name": "hypeSeo"
-	},
-	"require": {
-		"php": ">=5.5",
-		"composer/installers": "~1.0",
-		"fire015/flintstone": "^2.0"
-	}
+    "name": "hypejunction/hypeseo",
+    "description": "Tools for search engine optimization",
+    "type": "elgg-plugin",
+    "homepage": "http://hypejunction.com",
+    "keywords": [
+        "elgg",
+        "plugin",
+        "seo",
+        "search engine optimization",
+        "open graph",
+        "twitter cards",
+        "analytics"
+    ],
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "Ismayil Khayredinov",
+            "email": "info@hypejunction.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.0",
+        "composer/installers": "~1.0",
+        "elgg/elgg": "^3.0",
+        "fire015/flintstone": "^2.0"
+    },
+    "extra": {
+        "installer-name": "hypeSeo"
+    }
 }
