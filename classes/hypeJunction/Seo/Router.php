@@ -16,7 +16,7 @@ class Router {
 	 * @param array  $params Hook params
 	 * @return array
 	 */
-	public static function rewriteSitemapRoute($hook, $type, $return, $params) {
+	public static function rewriteSitemapRoute(\Elgg\Hook $hook) {
 		return [
 			'identifier' => 'seo',
 			'segments' => [
@@ -35,10 +35,10 @@ class Router {
 	 * @param array  $params Hook params
 	 * @return array
 	 */
-	public static function enforceRewriteRules($hook, $type, $return, $params) {
+	public static function enforceRewriteRules(\Elgg\Hook $hook) {
 
-		$identifier = elgg_extract('identifier', $params);
-		$segments = (array) elgg_extract('segments', $params, []);
+		$identifier = $hook->getParam('identifier');
+		$segments = (array) $hook->getParam('segments', []);
 
 		array_unshift($segments, $identifier);
 		
@@ -59,8 +59,12 @@ class Router {
 			return;
 		}
 
-		if (elgg_normalize_url($sef_path) !== $url && elgg_get_plugin_setting('redirect_to_canonical', 'hypeSeo')) {
-			forward($sef_path);
+		if (elgg_normalize_url($sef_path) !== $url && elgg_get_plugin_setting('redirect_to_canonical', 'hypeseo')) {
+			// route:rewrite is a hook handler, not an action, so the
+			// elgg_redirect_response() helper isn't usable here. Issue a
+			// raw redirect and exit before the original route resolves.
+			header('Location: ' . elgg_normalize_url($sef_path), true, 302);
+			exit;
 		}
 
 		//list($route, $guid) = explode('/', trim($original_path, '/'));

@@ -15,7 +15,9 @@ class Menus {
 	 * @param array          $params Hook params
 	 * @return ElggMenuItem[]
 	 */
-	public static function setupExtrasMenu($hook, $type, $return, $params) {
+	public static function setupExtrasMenu(\Elgg\Hook $hook) {
+		$return = $hook->getValue();
+
 
 		if (!elgg_is_admin_logged_in()) {
 			return;

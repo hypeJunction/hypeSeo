@@ -14,10 +14,9 @@ class RelFollow {
 	 *
 	 * @return string
 	 */
-	public static function trustLinksInContent($hook, $type, $return, $params) {
-
-		$vars = elgg_extract('vars', $params);
-		$entity = elgg_extract('entity', $vars);
+	public static function trustLinksInContent(\Elgg\Hook $hook) {
+		$vars = $hook->getParam('vars', []);
+		$entity = elgg_extract('entity', (array) $vars);
 
 		if (!$entity instanceof \ElggEntity) {
 			return null;
@@ -32,7 +31,7 @@ class RelFollow {
 			return null;
 		}
 
-		return self::stripRel($return);
+		return self::stripRel($hook->getValue());
 	}
 
 	/**

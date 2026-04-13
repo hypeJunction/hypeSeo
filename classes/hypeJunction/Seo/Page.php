@@ -13,7 +13,9 @@ class Page {
 	 * @param array  $params Hook params
 	 * @return array
 	 */
-	public static function setHeadMeta($hook, $type, $return, $params) {
+	public static function setHeadMeta(\Elgg\Hook $hook) {
+		$return = $hook->getValue();
+
 
 		$svc = RewriteService::getInstance();
 
@@ -89,7 +91,9 @@ class Page {
 	 * @param array  $params Hook params
 	 * @return array
 	 */
-	public static function configureRobots($hook, $type, $return, $params) {
+	public static function configureRobots(\Elgg\Hook $hook) {
+		$return = $hook->getValue();
+
 		$return .= PHP_EOL . "Sitemap: " . elgg_normalize_url('sitemap.xml') . PHP_EOL;
 		return $return;
 	}

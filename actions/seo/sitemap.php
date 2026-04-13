@@ -6,7 +6,7 @@ set_time_limit(0);
 
 $svc = RewriteService::getInstance();
 
-$sitemaps = elgg_get_plugin_setting('sitemaps', 'hypeSeo');
+$sitemaps = elgg_get_plugin_setting('sitemaps', 'hypeseo');
 if (!$sitemaps) {
 	$sitemaps = [];
 } else {
@@ -123,6 +123,6 @@ $file->open('write');
 $file->write($xml);
 $file->close();
 
-elgg_set_plugin_setting('sitemaps', json_encode(array_keys($sitemaps)), 'hypeSeo');
+elgg_get_plugin_from_id('hypeseo')->setSetting('sitemaps', json_encode(array_keys($sitemaps)));
 
-system_message(elgg_echo('seo:sitemap:generate:success'));
+return elgg_ok_response('', elgg_echo('seo:sitemap:generate:success'));

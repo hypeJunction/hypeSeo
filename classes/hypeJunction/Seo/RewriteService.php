@@ -129,7 +129,7 @@ class RewriteService {
 		";
 
 		$callback = [$this, 'rowToSefData'];
-		$data = get_data($query, $callback, [
+		$data = elgg()->db->getData($query, $callback, [
 			':path' => $path,
 		]);
 
@@ -168,7 +168,7 @@ class RewriteService {
 		";
 
 		$callback = [$this, 'rowToSefData'];
-		$data = get_data($query, $callback, [
+		$data = elgg()->db->getData($query, $callback, [
 			':guid' => $guid,
 		]);
 
@@ -190,7 +190,7 @@ class RewriteService {
 			FROM {$this->table} AS rt
 		";
 
-		$data = get_data_row($query);
+		$data = elgg()->db->getDataRow($query);
 
 		if (!$data) {
 			return 0;
@@ -229,7 +229,7 @@ class RewriteService {
 		";
 
 		$callback = [$this, 'rowToSefData'];
-		$data = get_data($query, $callback, [
+		$data = elgg()->db->getData($query, $callback, [
 			':path' => "%{$uri}%",
 		]);
 
@@ -347,7 +347,7 @@ class RewriteService {
 					entity_guid = :entity_guid,
 					custom = :custom
 			";
-			$id = insert_data($query, $params);
+			$id = elgg()->db->insertData($query, $params);
 		} else {
 			$params[':id'] = $data['id'];
 			$query = "
@@ -358,7 +358,7 @@ class RewriteService {
 					custom = :custom
 				WHERE id = :id
 			";
-			if (update_data($query, $params)) {
+			if (elgg()->db->updateData($query, false, $params)) {
 				$id = $data['id'];
 			}
 		}
@@ -389,7 +389,7 @@ class RewriteService {
 			':metatags' => $data['metatags'],
 		];
 
-		insert_data($query, $params);
+		elgg()->db->insertData($query, $params);
 
 		$aliases = array_filter(array_unique($data['aliases']));
 		if (!empty($aliases)) {
@@ -411,7 +411,7 @@ class RewriteService {
 					':path' => $alias,
 				];
 
-				insert_data($query, $params);
+				elgg()->db->insertData($query, $params);
 
 				$hash = sha1($alias);
 				$this->routes_cache->put($hash, $data);
@@ -431,7 +431,7 @@ class RewriteService {
 
 		$params = [':id' => (int) $id];
 
-		$aliases = get_data("
+		$aliases = elgg()->db->getData("
 			SELECT path FROM {$this->aliases_table}
 			WHERE route_id = :id
 		", null, $params);
@@ -442,17 +442,17 @@ class RewriteService {
 			}
 		}
 
-		delete_data("
+		elgg()->db->deleteData("
 			DELETE FROM {$this->aliases_table}
 			WHERE route_id = :id
 		", $params);
 
-		delete_data("
+		elgg()->db->deleteData("
 			DELETE FROM {$this->data_table}
 			WHERE route_id = :id
 		", $params);
 
-		return delete_data("
+		return (bool) elgg()->db->deleteData("
 			DELETE FROM {$this->table}
 			WHERE id = :id
 		", $params);
@@ -467,7 +467,7 @@ class RewriteService {
 	public function deleteDataFromGUID($guid = 0) {
 
 		$params = [':entity_guid' => (int) $guid];
-		$rows = get_data("
+		$rows = elgg()->db->getData("
 			SELECT id FROM {$this->table}
 			WHERE entity_guid = :entity_guid
 		", null, $params);
@@ -575,31 +575,29 @@ class RewriteService {
 	}
 
 	/**
-	 * Populate SEF data when entity is created
+	 * Populate SEF data when an entity is created, updated or deleted.
 	 *
-	 * @param string     $event  'create'
-	 * @param string     $type   'object', 'user' or 'group'
-	 * @param ElggEntity $entity Entity
+	 * @param \Elgg\Event $event The event — name is one of create|update|delete
 	 * @return void
 	 */
-	public static function updateEntityRewriteRules($event, $type, $entity) {
+	public static function updateEntityRewriteRules(\Elgg\Event $event) {
+		$entity = $event->getObject();
 		if (!$entity instanceof ElggEntity) {
 			return;
 		}
 
 		$svc = RewriteService::getInstance();
 
-		switch ($event) {
-
-			case 'update' :
-			case 'create' :
+		switch ($event->getName()) {
+			case 'update':
+			case 'create':
 				$data = $svc->prepareEntityData($entity);
 				if ($data) {
 					$svc->saveData($data);
 				}
 				break;
 
-			case 'delete' :
+			case 'delete':
 				$svc->deleteDataFromGUID($entity->guid);
 				break;
 		}
@@ -613,7 +611,7 @@ class RewriteService {
 	 * @return string
 	 */
 	public function getTargetUrlPattern($type, $subtype = '') {
-		$setting = elgg_get_plugin_setting("$type:$subtype", 'hypeSeo');
+		$setting = elgg_get_plugin_setting("$type:$subtype", 'hypeseo');
 		if (!is_null($setting)) {
 			return $setting;
 		}
@@ -662,13 +660,15 @@ class RewriteService {
 	 * @param array  $params Hook params
 	 * @return array
 	 */
-	public static function rewriteInlineUrls($hook, $type, $return, $params) {
+	public static function rewriteInlineUrls(\Elgg\Hook $hook) {
+		$return = $hook->getValue();
+
 
 		if (!empty($return['no_rewrite'])) {
 			return;
 		}
 
-		if (!elgg_get_plugin_setting('inline_rewrites', 'hypeSeo', true)) {
+		if (!elgg_get_plugin_setting('inline_rewrites', 'hypeseo', true)) {
 			return;
 		}
 		

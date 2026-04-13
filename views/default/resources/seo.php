@@ -19,7 +19,7 @@ switch ($page) {
 	case 'sitemaps':
 		$filename = (string) array_shift($segments);
 		if ($filename === '') {
-			throw new \Elgg\EntityNotFoundException();
+			throw new \Elgg\Exceptions\Http\EntityNotFoundException();
 		}
 
 		$file = new ElggFile();
@@ -27,7 +27,7 @@ switch ($page) {
 		$file->setFilename("sitemaps/{$filename}");
 
 		if (!$file->exists()) {
-			throw new \Elgg\EntityNotFoundException();
+			throw new \Elgg\Exceptions\Http\EntityNotFoundException();
 		}
 
 		header('Content-Type: application/xml', true);
@@ -37,4 +37,4 @@ switch ($page) {
 		exit;
 }
 
-throw new \Elgg\EntityNotFoundException();
+throw new \Elgg\Exceptions\Http\EntityNotFoundException();
