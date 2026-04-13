@@ -259,11 +259,33 @@ class RewriteService {
 			'guid' => (int) $row->entity_guid,
 		];
 		if ($row->metatags) {
-			$data['metatags'] = unserialize($row->metatags);
+			$data['metatags'] = self::decodeMetatags($row->metatags);
 		}
 
 
 		return $data;
+	}
+
+	/**
+	 * Decode stored metatags, accepting both the JSON format written by
+	 * this class on 3.x and the legacy PHP-serialized format written by
+	 * pre-migration 2.x installations. The JSON branch is tried first;
+	 * unserialize() is scoped to scalars only via allowed_classes=false
+	 * to prevent object injection on legacy rows.
+	 *
+	 * @param string $raw Raw column value
+	 * @return array
+	 */
+	private static function decodeMetatags($raw) {
+		if (!is_string($raw) || $raw === '') {
+			return [];
+		}
+		$decoded = json_decode($raw, true);
+		if (is_array($decoded)) {
+			return $decoded;
+		}
+		$decoded = @unserialize($raw, ['allowed_classes' => false]);
+		return is_array($decoded) ? $decoded : [];
 	}
 
 	/**
@@ -298,7 +320,7 @@ class RewriteService {
 		$data['aliases'] = array_unique($data['aliases']);
 		
 		if ($data['metatags']) {
-			$data['metatags'] = serialize($data['metatags']);
+			$data['metatags'] = json_encode($data['metatags']);
 		}
 
 		foreach ($data['aliases'] as $alias) {

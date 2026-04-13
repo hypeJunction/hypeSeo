@@ -10,7 +10,14 @@ $sitemaps = elgg_get_plugin_setting('sitemaps', 'hypeSeo');
 if (!$sitemaps) {
 	$sitemaps = [];
 } else {
-	$sitemaps = unserialize($sitemaps);
+	// Prefer JSON (new format). Fall back to legacy PHP-serialized value
+	// from pre-3.x installs, restricted to scalars to prevent object
+	// injection on tampered settings.
+	$decoded = json_decode($sitemaps, true);
+	if (!is_array($decoded)) {
+		$decoded = @unserialize($sitemaps, ['allowed_classes' => false]);
+	}
+	$sitemaps = is_array($decoded) ? $decoded : [];
 }
 
 foreach ($sitemaps as $name) {
@@ -116,6 +123,6 @@ $file->open('write');
 $file->write($xml);
 $file->close();
 
-elgg_set_plugin_setting('sitemaps', serialize(array_keys($sitemaps)), 'hypeSeo');
+elgg_set_plugin_setting('sitemaps', json_encode(array_keys($sitemaps)), 'hypeSeo');
 
 system_message(elgg_echo('seo:sitemap:generate:success'));

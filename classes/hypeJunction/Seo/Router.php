@@ -2,51 +2,10 @@
 
 namespace hypeJunction\Seo;
 
-use ElggFile;
-
 /**
  * @access private
  */
 class Router {
-
-	/**
-	 * SEO page handler
-	 * /seo/edit
-	 *
-	 * @param array $segments URL segments
-	 * @return bool
-	 */
-	public static function handleSeoPages($segments) {
-
-		$page = array_shift($segments);
-
-		switch ($page) {
-			case 'edit' :
-				echo elgg_view_resource('seo/edit');
-				return true;
-
-			case 'sitemaps' :
-				$filename = array_shift($segments);
-
-				$file = new ElggFile();
-				$file->owner_guid = elgg_get_site_entity()->guid;
-				$file->setFilename("sitemaps/$filename");
-
-				if (!$file->exists()) {
-					return;
-				}
-
-				header('Content-Type: application/xml', true);
-				
-				$file->open('read');
-				echo $file->grabFile();
-				$file->close();
-				exit;
-		}
-
-		return false;
-	}
-
 
 	/**
 	 * Route sitemap.xml

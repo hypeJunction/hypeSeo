@@ -37,9 +37,3 @@ elgg_register_event_handler('init', 'system', function () {
 });
 elgg_register_plugin_hook_handler('route:rewrite', 'all', [Router::class, 'enforceRewriteRules'], 1);
 elgg_register_plugin_hook_handler('route:rewrite', 'sitemap.xml', [Router::class, 'rewriteSitemapRoute'], 1);
-elgg_register_event_handler('upgrade', 'system', function () {
-    if (!elgg_is_admin_logged_in()) {
-        return;
-    }
-    require_once __DIR__ . '/lib/upgrades.php';
-});
