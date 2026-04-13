@@ -1,3 +1,28 @@
+<a name="2.0.0"></a>
+# 2.0.0 (2026-04-13)
+
+### Breaking Changes
+
+* **elgg:** raise minimum to Elgg 3.x (PHP 7.0+). Plugins running against Elgg 2.x must stay on hypeSeo 1.1.0.
+
+### Migration
+
+* **routing:** convert legacy `elgg_register_page_handler('seo', ...)` into a named route + `views/default/resources/seo.php`.
+* **cache:** replace removed `\Elgg\Cache\Pool` with a local `hypeJunction\Seo\Cache` interface; drop the unused `Memcache` backend that wrapped removed `\ElggMemcache`.
+* **upgrades:** delete legacy `lib/upgrades.php` + `run_function_once()`-based hook that migrated pre-2.x JSON sitemap files (long since complete on every live install).
+* **schema:** swap raw `entity_subtypes` SQL in admin views for `get_registered_entity_types()` (the table was dropped in Elgg 3.x).
+
+### Security
+
+* **unserialize:** harden two stored-data deserialize calls (sef_data.metatags column, hypeSeo sitemaps plugin setting) with JSON encoding + scalar-only fallback for legacy data.
+
+### Tests
+
+* **add:** PHPUnit unit suite for `RelFollow::stripRel` and `RewriteService::rowToSefData` (7 tests, 16 assertions).
+* **add:** Playwright smoke suite covering homepage, login, robots.txt, and the four admin SEO pages (7 tests, all passing on elgg3).
+
+
+
 <a name="1.1.0"></a>
 # [1.1.0](https://github.com/hypeJunction/hypeSeo/compare/1.0.2...v1.1.0) (2018-09-03)
 
