@@ -2,7 +2,6 @@
 
 namespace hypeJunction\Seo;
 
-use Elgg\Cache\Pool;
 use ElggEntity;
 use ElggUser;
 use stdClass;
@@ -33,16 +32,16 @@ class RewriteService {
 	private $data_table;
 
 	/**
-	 * @var Pool
+	 * @var Cache
 	 */
 	private $routes_cache;
 
 	/**
 	 * Constructor
 	 *
-	 * @param Pool $routes_cache Cache
+	 * @param Cache $routes_cache Cache
 	 */
-	public function __construct(Pool $routes_cache) {
+	public function __construct(Cache $routes_cache) {
 		$dbprefix = elgg_get_config('dbprefix');
 		$this->table = "{$dbprefix}sef_routes";
 		$this->aliases_table = "{$dbprefix}sef_aliases";
@@ -56,8 +55,7 @@ class RewriteService {
 	 */
 	public static function getInstance() {
 		if (is_null(self::$_instance)) {
-			$routes_cache = is_memcache_available() ? new Memcache() : new FileCache();
-			self::$_instance = new self($routes_cache);
+			self::$_instance = new self(new FileCache());
 		}
 		return self::$_instance;
 	}

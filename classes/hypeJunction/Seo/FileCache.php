@@ -2,10 +2,9 @@
 
 namespace hypeJunction\Seo;
 
-use Elgg\Cache\Pool;
 use Flintstone\Flintstone;
 
-class FileCache implements Pool {
+class FileCache implements Cache {
 
 	/**
 	 * @var Flintstone

@@ -58,7 +58,7 @@ class RewriteServiceTest extends TestCase {
     }
 
     private function makeService(): RewriteService {
-        $pool = new class implements \Elgg\Cache\Pool {
+        $pool = new class implements \hypeJunction\Seo\Cache {
             public function get($key, callable $callback = null, $default = null) { return $default; }
             public function invalidate($key) {}
             public function put($key, $value) {}
