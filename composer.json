@@ -20,12 +20,14 @@
         }
     ],
     "require": {
-        "php": ">=7.0",
-        "composer/installers": "~1.0",
+        "php": ">=7.4",
+        "composer/installers": "^2.0",
         "fire015/flintstone": "^2.0"
     },
     "extra": {
-        "installer-name": "hypeSeo"
+        "elgg-plugin": {
+            "id": "hypeseo"
+        }
     },
     "config": {
         "allow-plugins": {
