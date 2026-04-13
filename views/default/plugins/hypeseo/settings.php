@@ -6,7 +6,7 @@ if (!isset($entity->inline_rewrites)) {
 	$entity->inline_rewrites = true;
 }
 
-echo elgg_view_input('select', [
+echo elgg_view('input/select', [
 	'name' => 'params[inline_rewrites]',
 	'value' => $entity->inline_rewrites,
 	'options_values' => [
@@ -17,7 +17,7 @@ echo elgg_view_input('select', [
 	'help' => elgg_echo('seo:settings:inline_rewrites:help'),
 ]);
 
-echo elgg_view_input('select', [
+echo elgg_view('input/select', [
 	'name' => 'params[redirect_to_canonical]',
 	'value' => $entity->redirect_to_canonical,
 	'options_values' => [
@@ -28,7 +28,7 @@ echo elgg_view_input('select', [
 	'help' => elgg_echo('seo:settings:redirect_to_canonical:help'),
 ]);
 
-echo elgg_view_input('select', [
+echo elgg_view('input/select', [
 	'name' => 'params[rel_follow]',
 	'value' => $entity->rel_follow,
 	'options_values' => [
@@ -62,7 +62,7 @@ echo elgg_format_element('p', [
 
 foreach ($options as $key => $label) {
 	list($type, $subtype) = explode(':', $key);
-	echo elgg_view_input('text', [
+	echo elgg_view('input/text', [
 		'name' => "params[$key]",
 		'value' => $svc->getTargetUrlPattern($type, $subtype),
 		'label' => $label,

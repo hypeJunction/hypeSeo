@@ -32,6 +32,37 @@ return [
 				'segments' => '',
 			],
 		],
+		// In Elgg 4.x, custom admin pages must be registered as named
+		// routes that resolve to a resource view. Auto-discovery covers
+		// /admin built-ins but not plugin paths.
+		'admin:seo:generator' => [
+			'path' => '/admin/seo/generator',
+			'resource' => 'admin/seo/generator',
+			'middleware' => [
+				\Elgg\Router\Middleware\AdminGatekeeper::class,
+			],
+		],
+		'admin:seo:rules' => [
+			'path' => '/admin/seo/rules',
+			'resource' => 'admin/seo/rules',
+			'middleware' => [
+				\Elgg\Router\Middleware\AdminGatekeeper::class,
+			],
+		],
+		'admin:seo:sitemap' => [
+			'path' => '/admin/seo/sitemap',
+			'resource' => 'admin/seo/sitemap',
+			'middleware' => [
+				\Elgg\Router\Middleware\AdminGatekeeper::class,
+			],
+		],
+		'admin:seo:add_rule' => [
+			'path' => '/admin/seo/add_rule',
+			'resource' => 'admin/seo/add_rule',
+			'middleware' => [
+				\Elgg\Router\Middleware\AdminGatekeeper::class,
+			],
+		],
 	],
 
 	'hooks' => [

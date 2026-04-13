@@ -47,20 +47,20 @@ $get_static_urls('footer');
 
 $title = elgg_echo('seo:sitemap:static');
 
-$mod = elgg_view_input('plaintext', [
+$mod = elgg_view('input/plaintext', [
 	'name' => 'static',
 	'value' => implode(PHP_EOL, array_filter(array_unique($static))),
 	'label' => elgg_echo('seo:sitemap:urls'),
 ]);
 
-$mod .= elgg_view_input('select', [
+$mod .= elgg_view('input/select', [
 	'name' => 'priority[static]',
 	'value' => 1,
 	'options' => range(0, 1, 0.1),
 	'label' => elgg_echo('seo:sitemap:priority'),
 ]);
 
-$mod .= elgg_view_input('select', [
+$mod .= elgg_view('input/select', [
 	'name' => 'changefreq[static]',
 	'value' => 'monthly',
 	'options' => [
@@ -100,14 +100,14 @@ foreach ($options as $key => $label) {
 
 	$mod = '';
 
-	$mod .= elgg_view_input('select', [
+	$mod .= elgg_view('input/select', [
 		'name' => "priority[$key]",
 		'value' => 0.8,
 		'options' => range(0, 1, 0.1),
 		'label' => elgg_echo('seo:sitemap:priority'),
 	]);
 
-	$mod .= elgg_view_input('select', [
+	$mod .= elgg_view('input/select', [
 		'name' => "changefreq[$key]",
 		'value' => 'daily',
 		'options' => [
@@ -125,7 +125,7 @@ foreach ($options as $key => $label) {
 	echo elgg_view_module('info', $label, $mod);
 }
 
-echo elgg_view_input('submit', [
+echo elgg_view('input/submit', [
 	'field_class' => 'elgg-foot',
 	'value' => elgg_echo('seo:sitemap:generate'),
 ]);

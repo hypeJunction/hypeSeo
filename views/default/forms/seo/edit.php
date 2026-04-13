@@ -14,23 +14,23 @@ echo elgg_format_element('p', [
 	'class' => 'elgg-text-help',
 ], elgg_autop(elgg_echo('seo:settings:edit:help')));
 
-echo elgg_view_input('hidden', [
+echo elgg_view('input/hidden', [
 	'name' => 'seo[admin_defined]',
 	'value' => true,
 ]);
 
 $path = elgg_extract('path', $data, $svc->normalizeUri($uri));
-echo elgg_view_input('hidden', [
+echo elgg_view('input/hidden', [
 	'name' => 'seo[path]',
 	'value' => $path,
 ]);
-echo elgg_view_input('text', [
+echo elgg_view('input/text', [
 	'value' => $path,
 	'disabled' => true,
 	'label' => elgg_echo('seo:path'),
 ]);
 
-echo elgg_view_input('text', [
+echo elgg_view('input/text', [
 	'name' => 'seo[sef_path]',
 	'value' => elgg_extract('sef_path', $data, $path),
 	'required' => true,
@@ -38,19 +38,19 @@ echo elgg_view_input('text', [
 	'help' => elgg_echo('seo:sef_path:help'),
 ]);
 
-echo elgg_view_input('text', [
+echo elgg_view('input/text', [
 	'name' => 'seo[title]',
 	'value' => elgg_extract('title', $data),
 	'label' => elgg_echo('seo:title'),
 ]);
 
-echo elgg_view_input('text', [
+echo elgg_view('input/text', [
 	'name' => 'seo[description]',
 	'value' => elgg_extract('description', $data),
 	'label' => elgg_echo('seo:description'),
 ]);
 
-echo elgg_view_input('tags', [
+echo elgg_view('input/tags', [
 	'name' => 'seo[keywords]',
 	'value' => elgg_extract('keywords', $data),
 	'label' => elgg_echo('seo:keywords'),
@@ -85,14 +85,14 @@ foreach ($tags as $tag) {
 }
 
 foreach ($metatags as $tag => $value) {
-	echo elgg_view_input('text', [
+	echo elgg_view('input/text', [
 		'name' => "seo[metatags][$tag]",
 		'value' => $value,
 		'label' => $tag,
 	]);
 }
 
-echo elgg_view_input('submit', [
+echo elgg_view('input/submit', [
 	'wrapper_class' => 'elgg-foot',
 	'value' => elgg_echo('save'),
 ]);
