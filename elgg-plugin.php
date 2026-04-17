@@ -5,6 +5,7 @@ use hypeJunction\Seo\Menus;
 use hypeJunction\Seo\Page;
 use hypeJunction\Seo\RewriteService;
 use hypeJunction\Seo\Router;
+use hypeJunction\Seo\Upgrades\MigratePluginId;
 
 return [
 	'plugin' => [
@@ -112,6 +113,10 @@ return [
 				RewriteService::class . '::updateEntityRewriteRules' => [],
 			],
 		],
+	],
+
+	'upgrades' => [
+		MigratePluginId::class,
 	],
 
 	'view_extensions' => [

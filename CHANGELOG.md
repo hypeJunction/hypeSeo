@@ -1,3 +1,10 @@
+<a name="3.0.1"></a>
+## 3.0.1 (2026-04-17)
+
+### Bug Fixes
+
+* **upgrade:** add `Elgg\Upgrade\Batch` (`MigratePluginId`) that copies plugin settings from the orphaned 3.x entity (`title='hypeSeo'`) to the 4.x entity (`title='hypeseo'`). Sites upgrading from Elgg 3.x lost all admin-configured settings (URL rewrite patterns, inline_rewrites, redirect_to_canonical, rel_follow, sitemaps) because Elgg 4.x matches plugin entities by lowercase directory name and the old camelCase entity was not reused.
+
 <a name="3.0.0"></a>
 # 3.0.0 (2026-04-13)
 
