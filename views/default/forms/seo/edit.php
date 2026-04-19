@@ -85,7 +85,7 @@ foreach ($tags as $tag) {
 }
 
 foreach ($metatags as $tag => $value) {
-	echo elgg_view('input/text', [
+echo elgg_view('input/text', [
 		'name' => "seo[metatags][$tag]",
 		'value' => $value,
 		'label' => $tag,

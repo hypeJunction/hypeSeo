@@ -30,7 +30,7 @@ foreach ($sitemaps as $name) {
 $sitemap = [];
 
 $save_sitemap = function ($filename, $urls) {
-	$xml = elgg_view('seo/sitemap/urlset', [
+$xml = elgg_view('seo/sitemap/urlset', [
 		'urls' => $urls,
 	]);
 
@@ -65,7 +65,7 @@ foreach ($names as $name) {
 		}
 	} else {
 		list($type, $subtype) = explode(':', $name);
-		$entities = new ElggBatch('elgg_get_entities', [
+$entities = new ElggBatch('elgg_get_entities', [
 			'type' => $type,
 			'subtype' => $subtype ? : ELGG_ENTITIES_ANY_VALUE,
 			'limit' => 0,

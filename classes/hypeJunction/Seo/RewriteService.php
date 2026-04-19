@@ -129,7 +129,7 @@ class RewriteService {
 		";
 
 		$callback = [$this, 'rowToSefData'];
-		$data = elgg()->db->getData($query, $callback, [
+$data = elgg()->db->getData($query, $callback, [
 			':path' => $path,
 		]);
 
@@ -168,7 +168,7 @@ class RewriteService {
 		";
 
 		$callback = [$this, 'rowToSefData'];
-		$data = elgg()->db->getData($query, $callback, [
+$data = elgg()->db->getData($query, $callback, [
 			':guid' => $guid,
 		]);
 
@@ -229,7 +229,7 @@ class RewriteService {
 		";
 
 		$callback = [$this, 'rowToSefData'];
-		$data = elgg()->db->getData($query, $callback, [
+$data = elgg()->db->getData($query, $callback, [
 			':path' => "%{$uri}%",
 		]);
 
@@ -431,7 +431,7 @@ class RewriteService {
 
 		$params = [':id' => (int) $id];
 
-		$aliases = elgg()->db->getData("
+$aliases = elgg()->db->getData("
 			SELECT path FROM {$this->aliases_table}
 			WHERE route_id = :id
 		", null, $params);
@@ -442,17 +442,17 @@ class RewriteService {
 			}
 		}
 
-		elgg()->db->deleteData("
+elgg()->db->deleteData("
 			DELETE FROM {$this->aliases_table}
 			WHERE route_id = :id
 		", $params);
 
-		elgg()->db->deleteData("
+elgg()->db->deleteData("
 			DELETE FROM {$this->data_table}
 			WHERE route_id = :id
 		", $params);
 
-		return (bool) elgg()->db->deleteData("
+return (bool) elgg()->db->deleteData("
 			DELETE FROM {$this->table}
 			WHERE id = :id
 		", $params);
@@ -467,7 +467,7 @@ class RewriteService {
 	public function deleteDataFromGUID($guid = 0) {
 
 		$params = [':entity_guid' => (int) $guid];
-		$rows = elgg()->db->getData("
+$rows = elgg()->db->getData("
 			SELECT id FROM {$this->table}
 			WHERE entity_guid = :entity_guid
 		", null, $params);
@@ -564,7 +564,7 @@ class RewriteService {
 			if (!$data['keywords']) {
 				$data['keywords'] = implode(',', (array) $entity->tags);
 			}
-			$data['metatags'] = elgg_trigger_plugin_hook('metatags', 'discovery', [
+$data['metatags'] = elgg_trigger_plugin_hook('metatags', 'discovery', [
 				'entity' => $entity,
 				'url' => elgg_normalize_url($data['path']),
 			], (array) $data['metatags']);

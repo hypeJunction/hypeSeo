@@ -28,9 +28,9 @@ echo elgg_view_form('seo/search', [
 	<thead>
 		<tr>
 			<th></th>
-			<th><?= elgg_echo('seo:paths') ?></th>
-			<th><?= elgg_echo('seo:sef_path') ?></th>
-			<th><?= elgg_echo('seo:metatags') ?></th>
+			<th><?php echo elgg_echo('seo:paths') ?></th>
+			<th><?php echo elgg_echo('seo:sef_path') ?></th>
+			<th><?php echo elgg_echo('seo:metatags') ?></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -45,19 +45,19 @@ echo elgg_view_form('seo/search', [
 			<tr>
 				<td>
 					<?php
-					echo elgg_view('output/url', [
+    echo elgg_view('output/url', [
 						'text' => elgg_view_icon('pencil'),
-						'href' => elgg_http_add_url_query_elements('seo/edit', array(
+    'href' => elgg_http_add_url_query_elements('seo/edit', array(
 							'page_uri' => $data['path'],
 						)),
 						'class' => 'elgg-lightbox',
-						'data-colorbox-opts' => json_encode([
+    'data-colorbox-opts' => json_encode([
 							'maxWidth' => '600px',
 						]),
 					]);
-					echo elgg_view('output/url', [
+    echo elgg_view('output/url', [
 						'text' => elgg_view_icon('delete'),
-						'href' => elgg_http_add_url_query_elements('action/seo/delete', [
+    'href' => elgg_http_add_url_query_elements('action/seo/delete', [
 							'uri' => $data['sef_path'],
 						]),
 						'is_action' => true,
@@ -69,7 +69,7 @@ echo elgg_view_form('seo/search', [
 					<?php
 					$aliases = [];
 					foreach ($data['aliases'] as $alias) {
-						$alias = elgg_view('output/url', [
+    $alias = elgg_view('output/url', [
 							'text' => $alias,
 							'href' => $alias,
 							'no_rewrite' => true,
@@ -78,14 +78,14 @@ echo elgg_view_form('seo/search', [
 						]);
 						$aliases[] = elgg_format_element('li', [], $alias);
 					}
-					echo elgg_format_element('ul', [
+    echo elgg_format_element('ul', [
 						'class' => 'seo-list',
 					], implode('', $aliases));
 					?>
 				</td>
 				<td>
 					<?php
-					echo elgg_view('output/url', [
+    echo elgg_view('output/url', [
 						'text' => $data['sef_path'],
 						'href' => $data['sef_path'],
 						'no_rewrite' => true,
@@ -100,7 +100,7 @@ echo elgg_view_form('seo/search', [
 					foreach ($data['metatags'] as $key => $value) {
 						$meta[] = "<b>$key</b>: $value";
 					}
-					echo elgg_format_element('div', [
+    echo elgg_format_element('div', [
 						'class' => 'seo-metatags',
 					], implode('<br />', $meta));
 					?>

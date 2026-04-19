@@ -74,7 +74,7 @@ class MigratePluginId implements Batch {
 	}
 
 	private function getOldPluginEntity(): ?\ElggPlugin {
-		$entities = elgg_get_entities([
+$entities = elgg_get_entities([
 			'type' => 'object',
 			'subtype' => 'plugin',
 			'metadata_name_value_pairs' => [

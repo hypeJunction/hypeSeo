@@ -23,15 +23,15 @@ class Menus {
 			return;
 		}
 
-		$return[] = ElggMenuItem::factory([
+$return[] = ElggMenuItem::factory([
 			'name' => 'seo',
 			'text' => elgg_view_icon('search'),
 			'title' => elgg_echo('seo:edit'),
-			'href' => elgg_http_add_url_query_elements('seo/edit', array(
+'href' => elgg_http_add_url_query_elements('seo/edit', array(
 				'page_uri' => current_page_url(),
 			)),
 			'link_class' => 'elgg-lightbox',
-			'data-colorbox-opts' => json_encode([
+'data-colorbox-opts' => json_encode([
 				'maxWidth' => '600px',
 			]),
 		]);

@@ -1,12 +1,12 @@
 <?php
 
 if (!elgg_is_active_plugin('hypeDiscovery') && elgg_get_config('walled_garden')) {
-	echo elgg_format_element('p', [
+echo elgg_format_element('p', [
 		'class' => 'elgg-text-help',
 	], elgg_autop(elgg_echo('seo:sitemap:error')));
 	return;
 } else {
-	echo elgg_format_element('p', [
+echo elgg_format_element('p', [
 		'class' => 'elgg-text-help',
 	], elgg_autop(elgg_echo('seo:sitemap:help')));
 }
@@ -17,7 +17,7 @@ $file->owner_guid = elgg_get_site_entity()->guid;
 $file->setFilename("sitemaps/index.xml");
 
 if ($file->exists()) {
-	$link = elgg_view('output/url', [
+$link = elgg_view('output/url', [
 		'href' => elgg_normalize_url('/sitemap.xml'),
 		'target' => '_blank',
 	]);
@@ -100,14 +100,14 @@ foreach ($options as $key => $label) {
 
 	$mod = '';
 
-	$mod .= elgg_view('input/select', [
+$mod .= elgg_view('input/select', [
 		'name' => "priority[$key]",
 		'value' => 0.8,
 		'options' => range(0, 1, 0.1),
 		'label' => elgg_echo('seo:sitemap:priority'),
 	]);
 
-	$mod .= elgg_view('input/select', [
+$mod .= elgg_view('input/select', [
 		'name' => "changefreq[$key]",
 		'value' => 'daily',
 		'options' => [

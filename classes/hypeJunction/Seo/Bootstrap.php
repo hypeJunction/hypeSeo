@@ -28,7 +28,7 @@ class Bootstrap extends DefaultPluginBootstrap {
 		// identifiers — none of these table or column names collide
 		// with MySQL reserved words.
 		try {
-			$db->updateData("
+$db->updateData("
 				CREATE TABLE IF NOT EXISTS {$prefix}sef_routes (
 					id int(11) NOT NULL AUTO_INCREMENT,
 					path varchar(255) NOT NULL,
@@ -40,7 +40,7 @@ class Bootstrap extends DefaultPluginBootstrap {
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
 			");
 
-			$db->updateData("
+$db->updateData("
 				CREATE TABLE IF NOT EXISTS {$prefix}sef_aliases (
 					route_id int(11) NOT NULL,
 					path varchar(255) NOT NULL,
@@ -48,7 +48,7 @@ class Bootstrap extends DefaultPluginBootstrap {
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
 			");
 
-			$db->updateData("
+$db->updateData("
 				CREATE TABLE IF NOT EXISTS {$prefix}sef_data (
 					route_id int(11) NOT NULL,
 					title text,
@@ -74,7 +74,7 @@ class Bootstrap extends DefaultPluginBootstrap {
 	 *     registered object subtype at request time)
 	 */
 	public function init() {
-		\elgg_register_menu_item('page', [
+\elgg_register_menu_item('page', [
 			'name' => 'seo:settings',
 			'href' => 'admin/plugin_settings/hypeseo',
 			'text' => \elgg_echo('admin:seo:settings'),
@@ -82,7 +82,7 @@ class Bootstrap extends DefaultPluginBootstrap {
 			'section' => 'seo',
 		]);
 
-		\elgg_register_menu_item('page', [
+\elgg_register_menu_item('page', [
 			'name' => 'seo:generator',
 			'href' => 'admin/seo/generator',
 			'text' => \elgg_echo('admin:seo:generator'),
@@ -90,7 +90,7 @@ class Bootstrap extends DefaultPluginBootstrap {
 			'section' => 'seo',
 		]);
 
-		\elgg_register_menu_item('page', [
+\elgg_register_menu_item('page', [
 			'name' => 'seo:rules',
 			'href' => 'admin/seo/rules',
 			'text' => \elgg_echo('admin:seo:rules'),
@@ -98,7 +98,7 @@ class Bootstrap extends DefaultPluginBootstrap {
 			'section' => 'seo',
 		]);
 
-		\elgg_register_menu_item('page', [
+\elgg_register_menu_item('page', [
 			'name' => 'seo:sitemap',
 			'href' => 'admin/seo/sitemap',
 			'text' => \elgg_echo('admin:seo:sitemap'),
@@ -111,7 +111,7 @@ class Bootstrap extends DefaultPluginBootstrap {
 		// concrete subtype string and we want to filter the full universe.
 		$registered = (array) \get_registered_entity_types('object');
 		foreach ($registered as $subtype) {
-			\elgg_register_plugin_hook_handler(
+\elgg_register_plugin_hook_handler(
 				'view',
 				"object/{$subtype}",
 				[RelFollow::class, 'trustLinksInContent']

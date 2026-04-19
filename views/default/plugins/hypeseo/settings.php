@@ -62,7 +62,7 @@ echo elgg_format_element('p', [
 
 foreach ($options as $key => $label) {
 	list($type, $subtype) = explode(':', $key);
-	echo elgg_view('input/text', [
+echo elgg_view('input/text', [
 		'name' => "params[$key]",
 		'value' => $svc->getTargetUrlPattern($type, $subtype),
 		'label' => $label,
