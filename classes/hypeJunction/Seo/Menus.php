@@ -15,7 +15,7 @@ class Menus {
 	 * @param array          $params Hook params
 	 * @return ElggMenuItem[]
 	 */
-	public static function setupExtrasMenu(\Elgg\Hook $hook) {
+	public static function setupExtrasMenu(\Elgg\Event $hook) {
 		$return = $hook->getValue();
 
 

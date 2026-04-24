@@ -66,7 +66,7 @@ return [
 		],
 	],
 
-	'hooks' => [
+	'events' => [
 		'view_vars' => [
 			'output/url' => [
 				RewriteService::class . '::rewriteInlineUrls' => [],
@@ -95,9 +95,6 @@ return [
 				Router::class . '::rewriteSitemapRoute' => [],
 			],
 		],
-	],
-
-	'events' => [
 		'create' => [
 			'all' => [
 				RewriteService::class . '::updateEntityRewriteRules' => [],

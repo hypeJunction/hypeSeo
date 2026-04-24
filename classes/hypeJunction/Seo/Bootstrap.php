@@ -111,7 +111,7 @@ $db->updateData("
 		// concrete subtype string and we want to filter the full universe.
 		$registered = (array) \get_registered_entity_types('object');
 		foreach ($registered as $subtype) {
-\elgg_register_plugin_hook_handler(
+\elgg_register_event_handler(
 				'view',
 				"object/{$subtype}",
 				[RelFollow::class, 'trustLinksInContent']

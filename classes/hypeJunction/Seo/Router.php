@@ -16,7 +16,7 @@ class Router {
 	 * @param array  $params Hook params
 	 * @return array
 	 */
-	public static function rewriteSitemapRoute(\Elgg\Hook $hook) {
+	public static function rewriteSitemapRoute(\Elgg\Event $hook) {
 		return [
 			'identifier' => 'seo',
 			'segments' => [
@@ -35,7 +35,7 @@ class Router {
 	 * @param array  $params Hook params
 	 * @return array
 	 */
-	public static function enforceRewriteRules(\Elgg\Hook $hook) {
+	public static function enforceRewriteRules(\Elgg\Event $hook) {
 
 		$identifier = $hook->getParam('identifier');
 		$segments = (array) $hook->getParam('segments', []);

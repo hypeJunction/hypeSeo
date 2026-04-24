@@ -13,7 +13,7 @@ class Page {
 	 * @param array  $params Hook params
 	 * @return array
 	 */
-	public static function setHeadMeta(\Elgg\Hook $hook) {
+	public static function setHeadMeta(\Elgg\Event $hook) {
 		$return = $hook->getValue();
 
 
@@ -91,7 +91,7 @@ class Page {
 	 * @param array  $params Hook params
 	 * @return array
 	 */
-	public static function configureRobots(\Elgg\Hook $hook) {
+	public static function configureRobots(\Elgg\Event $hook) {
 		$return = $hook->getValue();
 
 		$return .= PHP_EOL . "Sitemap: " . elgg_normalize_url('sitemap.xml') . PHP_EOL;

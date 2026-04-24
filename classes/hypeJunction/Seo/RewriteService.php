@@ -564,7 +564,7 @@ $rows = elgg()->db->getData("
 			if (!$data['keywords']) {
 				$data['keywords'] = implode(',', (array) $entity->tags);
 			}
-$data['metatags'] = elgg_trigger_plugin_hook('metatags', 'discovery', [
+$data['metatags'] = elgg_trigger_event_results('metatags', 'discovery', [
 				'entity' => $entity,
 				'url' => elgg_normalize_url($data['path']),
 			], (array) $data['metatags']);
@@ -660,7 +660,7 @@ $data['metatags'] = elgg_trigger_plugin_hook('metatags', 'discovery', [
 	 * @param array  $params Hook params
 	 * @return array
 	 */
-	public static function rewriteInlineUrls(\Elgg\Hook $hook) {
+	public static function rewriteInlineUrls(\Elgg\Event $hook) {
 		$return = $hook->getValue();
 
 
