@@ -28,7 +28,7 @@ $return[] = ElggMenuItem::factory([
 			'text' => elgg_view_icon('search'),
 			'title' => elgg_echo('seo:edit'),
 'href' => elgg_http_add_url_query_elements('seo/edit', array(
-				'page_uri' => current_page_url(),
+				'page_uri' => elgg_get_current_url(),
 			)),
 			'link_class' => 'elgg-lightbox',
 'data-colorbox-opts' => json_encode([

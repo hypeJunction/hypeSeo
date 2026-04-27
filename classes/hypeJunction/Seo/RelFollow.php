@@ -15,6 +15,10 @@ class RelFollow {
 	 * @return string
 	 */
 	public static function trustLinksInContent(\Elgg\Event $hook) {
+		if (!str_starts_with($hook->getType(), 'object/')) {
+			return null;
+		}
+
 		$vars = $hook->getParam('vars', []);
 		$entity = elgg_extract('entity', (array) $vars);
 

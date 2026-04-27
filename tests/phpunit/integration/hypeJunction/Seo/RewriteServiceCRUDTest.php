@@ -118,9 +118,8 @@ class RewriteServiceCRUDTest extends IntegrationTestCase {
 	}
 
 	public function testDeleteDataFromGUIDRemovesRoutesForEntity(): void {
-		$admin = $this->createUser();
-		$admin->makeAdmin();
-		elgg_get_session()->setLoggedInUser($admin);
+		$admin = elgg_get_entities(['type' => 'user', 'limit' => 1])[0];
+		_elgg_services()->session_manager->setLoggedInUser($admin);
 
 		$object = $this->createObject([
 			'subtype' => 'blog',
@@ -137,7 +136,7 @@ class RewriteServiceCRUDTest extends IntegrationTestCase {
 
 		$this->assertFalse($this->svc->getRewriteRulesFromUri($path));
 
-		elgg_get_session()->removeLoggedInUser();
+		_elgg_services()->session_manager->removeLoggedInUser();
 	}
 
 	public function testSaveDataMetatagsStoredAsJson(): void {
@@ -148,8 +147,11 @@ class RewriteServiceCRUDTest extends IntegrationTestCase {
 		$id = $this->save(['path' => $path, 'sef_path' => $sef, 'metatags' => $metatags]);
 
 		$prefix = elgg()->db->prefix;
-		$row = elgg()->db->getDataRow("SELECT metatags FROM {$prefix}sef_data WHERE route_id = ?", null, [$id]);
-		$this->assertNotNull($row);
-		$this->assertSame($metatags, json_decode($row->metatags, true));
+		$row = elgg()->db->getConnection('read')->executeQuery(
+			"SELECT metatags FROM {$prefix}sef_data WHERE route_id = ?",
+			[$id]
+		)->fetchAssociative();
+		$this->assertNotEmpty($row);
+		$this->assertSame($metatags, json_decode($row['metatags'], true));
 	}
 }

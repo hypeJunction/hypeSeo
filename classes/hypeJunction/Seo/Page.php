@@ -19,7 +19,7 @@ class Page {
 
 		$svc = RewriteService::getInstance();
 
-		$url = current_page_url();
+		$url = elgg_get_current_url();
 		$data = $svc->getRewriteRulesFromUri($url);
 		if (!$data) {
 			return;

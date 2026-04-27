@@ -50,6 +50,17 @@ class RewriteService {
 	}
 
 	/**
+	 * Strip leading colons from DBAL param keys (Elgg 4.x used ':param', DBAL 3.x needs 'param').
+	 */
+	private function p(array $params): array {
+		$out = [];
+		foreach ($params as $k => $v) {
+			$out[ltrim((string)$k, ':')] = $v;
+		}
+		return $out;
+	}
+
+	/**
 	 * Returns a singleton
 	 * @return self
 	 */
@@ -129,9 +140,8 @@ class RewriteService {
 		";
 
 		$callback = [$this, 'rowToSefData'];
-$data = elgg()->db->getData($query, $callback, [
-			':path' => $path,
-		]);
+		$rows = elgg()->db->getConnection('read')->executeQuery($query, $this->p([':path' => $path]))->fetchAllAssociative();
+		$data = array_map(fn($r) => $callback((object)$r), $rows);
 
 		if (!$data) {
 			return false;
@@ -168,9 +178,8 @@ $data = elgg()->db->getData($query, $callback, [
 		";
 
 		$callback = [$this, 'rowToSefData'];
-$data = elgg()->db->getData($query, $callback, [
-			':guid' => $guid,
-		]);
+		$rows = elgg()->db->getConnection('read')->executeQuery($query, $this->p([':guid' => $guid]))->fetchAllAssociative();
+		$data = array_map(fn($r) => $callback((object)$r), $rows);
 
 		if (!$data) {
 			return false;
@@ -190,13 +199,13 @@ $data = elgg()->db->getData($query, $callback, [
 			FROM {$this->table} AS rt
 		";
 
-		$data = elgg()->db->getDataRow($query);
+		$row = elgg()->db->getConnection('read')->executeQuery($query)->fetchAssociative();
 
-		if (!$data) {
+		if (!$row) {
 			return 0;
 		}
 
-		return $data->total;
+		return (int)$row['total'];
 	}
 
 	/**
@@ -229,9 +238,8 @@ $data = elgg()->db->getData($query, $callback, [
 		";
 
 		$callback = [$this, 'rowToSefData'];
-$data = elgg()->db->getData($query, $callback, [
-			':path' => "%{$uri}%",
-		]);
+		$rows = elgg()->db->getConnection('read')->executeQuery($query, $this->p([':path' => "%{$uri}%"]))->fetchAllAssociative();
+		$data = array_map(fn($r) => $callback((object)$r), $rows);
 
 		if (!$data) {
 			return false;
@@ -335,6 +343,7 @@ $data = elgg()->db->getData($query, $callback, [
 		];
 
 		$id = false;
+		$wconn = elgg()->db->getConnection('write');
 		if (empty($data['id'])) {
 			$query = "
 				INSERT INTO {$this->table}
@@ -347,7 +356,8 @@ $data = elgg()->db->getData($query, $callback, [
 					entity_guid = :entity_guid,
 					custom = :custom
 			";
-			$id = elgg()->db->insertData($query, $params);
+			$wconn->executeStatement($query, $this->p($params));
+			$id = (int)$wconn->lastInsertId();
 		} else {
 			$params[':id'] = $data['id'];
 			$query = "
@@ -358,7 +368,7 @@ $data = elgg()->db->getData($query, $callback, [
 					custom = :custom
 				WHERE id = :id
 			";
-			if (elgg()->db->updateData($query, false, $params)) {
+			if ($wconn->executeStatement($query, $this->p($params))) {
 				$id = $data['id'];
 			}
 		}
@@ -389,7 +399,7 @@ $data = elgg()->db->getData($query, $callback, [
 			':metatags' => $data['metatags'],
 		];
 
-		elgg()->db->insertData($query, $params);
+		$wconn->executeStatement($query, $this->p($params));
 
 		$aliases = array_filter(array_unique($data['aliases']));
 		if (!empty($aliases)) {
@@ -411,7 +421,7 @@ $data = elgg()->db->getData($query, $callback, [
 					':path' => $alias,
 				];
 
-				elgg()->db->insertData($query, $params);
+				$wconn->executeStatement($query, $this->p($params));
 
 				$hash = sha1($alias);
 				$this->routes_cache->put($hash, $data);
@@ -430,32 +440,34 @@ $data = elgg()->db->getData($query, $callback, [
 	public function deleteData($id = 0) {
 
 		$params = [':id' => (int) $id];
+		$rconn = elgg()->db->getConnection('read');
+		$wconn = elgg()->db->getConnection('write');
 
-$aliases = elgg()->db->getData("
-			SELECT path FROM {$this->aliases_table}
-			WHERE route_id = :id
-		", null, $params);
+		$aliases = $rconn->executeQuery(
+			"SELECT path FROM {$this->aliases_table} WHERE route_id = :id",
+			$this->p($params)
+		)->fetchAllAssociative();
 
 		if ($aliases) {
 			foreach ($aliases as $alias) {
-				$this->routes_cache->invalidate(sha1($alias->path));
+				$this->routes_cache->invalidate(sha1($alias['path']));
 			}
 		}
 
-elgg()->db->deleteData("
-			DELETE FROM {$this->aliases_table}
-			WHERE route_id = :id
-		", $params);
+		$wconn->executeStatement(
+			"DELETE FROM {$this->aliases_table} WHERE route_id = :id",
+			$this->p($params)
+		);
 
-elgg()->db->deleteData("
-			DELETE FROM {$this->data_table}
-			WHERE route_id = :id
-		", $params);
+		$wconn->executeStatement(
+			"DELETE FROM {$this->data_table} WHERE route_id = :id",
+			$this->p($params)
+		);
 
-return (bool) elgg()->db->deleteData("
-			DELETE FROM {$this->table}
-			WHERE id = :id
-		", $params);
+		return (bool) $wconn->executeStatement(
+			"DELETE FROM {$this->table} WHERE id = :id",
+			$this->p($params)
+		);
 	}
 
 	/**
@@ -467,14 +479,14 @@ return (bool) elgg()->db->deleteData("
 	public function deleteDataFromGUID($guid = 0) {
 
 		$params = [':entity_guid' => (int) $guid];
-$rows = elgg()->db->getData("
-			SELECT id FROM {$this->table}
-			WHERE entity_guid = :entity_guid
-		", null, $params);
+		$rows = elgg()->db->getConnection('read')->executeQuery(
+			"SELECT id FROM {$this->table} WHERE entity_guid = :entity_guid",
+			$this->p($params)
+		)->fetchAllAssociative();
 
 		if ($rows) {
 			foreach ($rows as $row) {
-				$this->deleteData($row->id);
+				$this->deleteData((int)$row['id']);
 			}
 		}
 	}
@@ -626,11 +638,6 @@ $data['metatags'] = elgg_trigger_event_results('metatags', 'discovery', [
 				}
 
 			case 'group' :
-				$registered = (array) get_registered_entity_types($type);
-				if (!in_array($subtype, $registered)) {
-					return;
-				}
-
 				$slug = $subtype;
 				$keys = [
 					"seo:item:$type:$subtype",

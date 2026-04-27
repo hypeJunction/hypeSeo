@@ -28,7 +28,9 @@ class Bootstrap extends DefaultPluginBootstrap {
 		// identifiers — none of these table or column names collide
 		// with MySQL reserved words.
 		try {
-$db->updateData("
+			$conn = $db->getConnection('write');
+
+			$conn->executeStatement("
 				CREATE TABLE IF NOT EXISTS {$prefix}sef_routes (
 					id int(11) NOT NULL AUTO_INCREMENT,
 					path varchar(255) NOT NULL,
@@ -40,7 +42,7 @@ $db->updateData("
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
 			");
 
-$db->updateData("
+			$conn->executeStatement("
 				CREATE TABLE IF NOT EXISTS {$prefix}sef_aliases (
 					route_id int(11) NOT NULL,
 					path varchar(255) NOT NULL,
@@ -48,7 +50,7 @@ $db->updateData("
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
 			");
 
-$db->updateData("
+			$conn->executeStatement("
 				CREATE TABLE IF NOT EXISTS {$prefix}sef_data (
 					route_id int(11) NOT NULL,
 					title text,
@@ -107,15 +109,8 @@ $db->updateData("
 		]);
 
 		// rel="nofollow" stripping for content rendered for trusted users.
-		// Registered per-subtype because the `view` hook fires once per
-		// concrete subtype string and we want to filter the full universe.
-		$registered = (array) \get_registered_entity_types('object');
-		foreach ($registered as $subtype) {
-\elgg_register_event_handler(
-				'view',
-				"object/{$subtype}",
-				[RelFollow::class, 'trustLinksInContent']
-			);
-		}
+		// Handler guards internally on object/ view prefix; registered once
+		// for 'all' since elgg_get_registered_entity_types() was removed in 5.x.
+\elgg_register_event_handler('view', 'all', [RelFollow::class, 'trustLinksInContent']);
 	}
 }

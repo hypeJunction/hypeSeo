@@ -1,4 +1,4 @@
-# hypeSeo plugin architecture (Elgg 4.x)
+# hypeSeo plugin architecture (Elgg 5.x)
 
 Search-engine optimisation tools for Elgg: SEF URL rewriting, sitemap
 generation, configurable per-entity URL patterns, OGP/meta tags, and
@@ -8,18 +8,18 @@ admin-controlled `rel="nofollow"` stripping for trusted users.
 
 ```
 hypeseo/
-├── composer.json             plugin metadata + flintstone dep (sole metadata source in 4.x)
-├── elgg-plugin.php           declarative config (actions, routes, hooks, events, view extensions, plugin key, bootstrap)
+├── composer.json             plugin metadata + flintstone dep (sole metadata source; elgg/elgg ^5.0, php >=8.2)
+├── elgg-plugin.php           declarative config (actions, routes, events [unified in 5.x], view extensions, plugin key, bootstrap)
 ├── autoloader.php            optional vendor/ autoload shim
 ├── classes/hypeJunction/Seo/
-│   ├── Bootstrap.php         extends DefaultPluginBootstrap — activate() creates sef_* tables, init() registers menu items + per-subtype view/object/<subtype> hooks
+│   ├── Bootstrap.php         extends DefaultPluginBootstrap — activate() creates sef_* tables via DBAL executeStatement(), init() registers menu items + single view/all handler
 │   ├── Cache.php             local cache contract (replaces removed \Elgg\Cache\Pool)
 │   ├── FileCache.php         Flintstone-backed Cache implementation
-│   ├── RewriteService.php    DB CRUD via elgg()->db->* + cache for SEF lookups (singleton)
-│   ├── Router.php            route:rewrite hook handlers (enforce, sitemap.xml)
-│   ├── Page.php              head / robots.txt hook handlers
-│   ├── Menus.php             menu:extras hook handler
-│   └── RelFollow.php         object/<subtype> view hook — strips rel=nofollow
+│   ├── RewriteService.php    DB CRUD via DBAL getConnection() + cache for SEF lookups (singleton)
+│   ├── Router.php            route:rewrite event handlers (enforce, sitemap.xml)
+│   ├── Page.php              head / robots.txt event handlers
+│   ├── Menus.php             menu:extras event handler
+│   └── RelFollow.php         view/all event handler — strips rel=nofollow for object/* types
 ├── actions/seo/              autogen / edit / delete / sitemap (admin only) — return ResponseBuilder
 ├── views/default/
 │   ├── resources/
@@ -30,12 +30,13 @@ hypeseo/
 │   ├── forms/seo/            edit / search / sitemap / add_rule forms
 │   ├── plugins/hypeseo/settings.php   plugin settings UI (lowercase dir matches plugin id)
 │   └── seo/sitemap/          sitemap XML view templates
-└── tests/                    pre-migration baseline (phpunit + playwright)
+├── docker/elgg5/             Elgg 5.x test stack (PHP 8.2-apache, MySQL 8.0, PHPUnit ~9.5)
+└── tests/                    integration (12 tests) + unit + playwright
 ```
 
-## Registered hooks/events (elgg-plugin.php)
+## Registered events (elgg-plugin.php)
 
-Declared in `elgg-plugin.php` (Elgg 4.x declarative config) — no init closure:
+Declared in `elgg-plugin.php` (Elgg 5.x unified events system — `hooks` key removed) — no init closure:
 
 | Kind | Identifier | Handler |
 |------|------------|---------|
@@ -48,24 +49,24 @@ Declared in `elgg-plugin.php` (Elgg 4.x declarative config) — no init closure:
 | event | `create / all` | `RewriteService::updateEntityRewriteRules` |
 | event | `update / all` | `RewriteService::updateEntityRewriteRules` |
 | event | `delete / all` | `RewriteService::updateEntityRewriteRules` |
-| hook | `view_vars / output/url` | `RewriteService::rewriteInlineUrls` |
-| hook | `head / page` | `Page::setHeadMeta` |
-| hook | `robots.txt / site` | `Page::configureRobots` |
-| hook | `register / menu:extras` | `Menus::setupExtrasMenu` |
-| hook | `view / object/<subtype>` | `RelFollow::trustLinksInContent` (per registered object subtype) |
+| event | `view_vars / output/url` | `RewriteService::rewriteInlineUrls` |
+| event | `head / page` | `Page::setHeadMeta` |
+| event | `robots.txt / site` | `Page::configureRobots` |
+| event | `register / menu:extras` | `Menus::setupExtrasMenu` |
+| event | `view / all` | `RelFollow::trustLinksInContent` (guards on `str_starts_with(type, 'object/')`) |
 | view extension | `elgg.css`, `admin.css` | `seo.css` |
 | menu items | `page` (admin section: `seo`) | settings, generator, rules, sitemap |
 
 Registered runtime via `Bootstrap::init()` (declarative config can't express these):
 
 - 4 admin page menu items (`elgg_register_menu_item('page', ...)`)
-- `view / object/<subtype>` hooks looped over every registered object subtype → `RelFollow::trustLinksInContent`
+- Single `view / all` event → `RelFollow::trustLinksInContent` (replaces per-subtype loop — entity registry removed in 5.x)
 
 ## Database schema (custom)
 
 Created on plugin activation by `Bootstrap::activate()`, which inlines
-the DDL via `elgg()->db->updateData()` (the legacy
-`activate.php` + `run_sql_script()` pair was removed in Elgg 4.x).
+the DDL via `elgg()->db->getConnection('write')->executeStatement()` (DBAL 3.x —
+`Database::updateData()` rejects raw SQL strings in Elgg 5.x).
 Three custom tables (now InnoDB / utf8mb4):
 
 - `{prefix}sef_routes(id, path, sef_path, entity_guid, custom)` — primary lookup
@@ -79,8 +80,8 @@ rows survive the upgrade; new writes use JSON only.
 ## External dependencies
 
 - `fire015/flintstone` ^2.0 — file-backed key-value store (FileCache backend)
-- `composer/installers` ~1.0 — required for `type: elgg-plugin`
-- Elgg core 3.x (declared in `manifest.xml`, NOT in composer require — see `composer.json` comment)
+- `composer/installers` ^2.0 — required for `type: elgg-plugin`
+- `elgg/elgg` ^5.0 (PHP 8.2+)
 - Suggested (not required): `hypeDiscovery` (sitemap discoverability checks), `trusted_users` (RelFollow trust source)
 
 ## Migration notes (2.x → 3.x)
@@ -106,5 +107,6 @@ Changes that aren't obvious from the diff:
 
 ## Tests
 
-- `tests/phpunit/unit/` — pure-PHP suites for `RelFollow::stripRel` and `RewriteService::rowToSefData`. Run with `php phpunit.phar -c tests/phpunit.xml` in any PHP 8.1 container; no Elgg bootstrap needed. 7 tests / 16 assertions.
-- `tests/playwright/` — browser smoke suite covering homepage, login, robots.txt, and the four admin SEO pages. Run inside the elgg-migrate `node` profile container (image `mcr.microsoft.com/playwright:v1.49.0-noble`, pinned to `@playwright/test 1.49.0`). 7 tests passing on elgg3.
+- `tests/phpunit/unit/` — pure-PHP suites for `RelFollow::stripRel` and `RewriteService::rowToSefData`. No Elgg bootstrap needed.
+- `tests/phpunit/integration/` — 12 integration tests / 107 assertions covering plugin registration, table existence, action access, and `RewriteService` CRUD. Run via `docker compose -f docker/elgg5/docker-compose.yml exec elgg vendor/bin/phpunit --configuration mod/hypeseo/tests/phpunit-integration.xml`.
+- `tests/playwright/` — browser smoke suite covering homepage, login, robots.txt, and the four admin SEO pages.

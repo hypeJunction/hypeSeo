@@ -19,7 +19,7 @@ $rules = new \ElggBatch([$svc, 'getRewriteRules'], [
 echo elgg_view_form('seo/search', [
 	'disable_security' => true,
 	'method' => 'GET',
-	'action' => current_page_url(),
+	'action' => elgg_get_current_url(),
     'class' => 'seo-search-form'
 ]);
 

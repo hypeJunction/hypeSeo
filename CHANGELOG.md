@@ -1,3 +1,29 @@
+<a name="4.0.0"></a>
+# 4.0.0 (2026-04-27)
+
+### Breaking Changes
+
+* **elgg:** raise minimum to Elgg 5.x (PHP 8.2+). Plugins on Elgg 4.x must stay on hypeSeo 3.0.x.
+
+### Migration (4.x → 5.x)
+
+* **events:** merged `hooks` + `events` keys in `elgg-plugin.php` into a single `events` key (Elgg 5.x unified event system).
+* **handler signatures:** all hook/event handler classes updated from `\Elgg\Hook` to `\Elgg\Event` parameter type.
+* **removed functions:** replaced `elgg_register_plugin_hook_handler()` → `elgg_register_event_handler()`, `elgg_trigger_plugin_hook()` → `elgg_trigger_event_results()`, `current_page_url()` → `elgg_get_current_url()`, `get_registered_entity_types()` / `elgg_get_registered_entity_types()` (removed in 5.x — replaced with guard-free logic).
+* **session manager:** `elgg_get_session()->setLoggedInUser()` → `_elgg_services()->session_manager->setLoggedInUser()`.
+* **db layer:** Elgg 5.x uses Doctrine DBAL 3.x — `Database::getData/getDataRow/insertData/updateData/deleteData()` reject raw SQL strings; all `RewriteService` DB calls migrated to `elgg()->db->getConnection('read'/'write')->executeQuery()/executeStatement()` with named parameters (DBAL 3.x strips the leading colon from param keys).
+* **Bootstrap DDL:** `$db->updateData("CREATE TABLE...")` → `$db->getConnection('write')->executeStatement(...)`.
+* **view handler:** per-subtype `view/object/<subtype>` loop removed (requires entity registry which is gone); replaced with single `view/all` handler + `str_starts_with($event->getType(), 'object/')` guard in `RelFollow`.
+* **composer.json:** bumped `php: >=7.4` → `>=8.2`, `elgg/elgg: ^4.0` → `^5.0`.
+
+### Infrastructure
+
+* Added `docker/elgg5/` test stack (PHP 8.2-apache, MySQL 8.0, PHPUnit ~9.5).
+
+### Tests
+
+* PHPUnit integration suite (12 tests, 107 assertions) green on Elgg 5.x.
+
 <a name="3.0.1"></a>
 ## 3.0.1 (2026-04-17)
 

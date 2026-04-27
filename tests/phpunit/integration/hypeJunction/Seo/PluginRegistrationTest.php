@@ -20,8 +20,9 @@ class PluginRegistrationTest extends IntegrationTestCase {
 
 	public function testCustomTablesExist(): void {
 		$prefix = elgg()->db->prefix;
+		$conn = elgg()->db->getConnection('read');
 		foreach (['sef_routes', 'sef_aliases', 'sef_data'] as $tbl) {
-			$rows = elgg()->db->getData("SHOW TABLES LIKE '{$prefix}{$tbl}'");
+			$rows = $conn->executeQuery("SHOW TABLES LIKE ?", ["{$prefix}{$tbl}"])->fetchAllAssociative();
 			$this->assertNotEmpty($rows, "Table {$prefix}{$tbl} does not exist");
 		}
 	}
