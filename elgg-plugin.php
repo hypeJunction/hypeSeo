@@ -10,6 +10,7 @@ use hypeJunction\Seo\Upgrades\MigratePluginId;
 return [
 	'plugin' => [
 		'name' => 'hypeSeo',
+		'version' => '4.0.0',
 		'activate_on_install' => false,
 	],
 
