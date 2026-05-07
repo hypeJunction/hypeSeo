@@ -10,7 +10,9 @@ $entities = new ElggBatch('elgg_get_entities', [
 	'offset' => (int) get_input('offset', 0),
 ]);
 
-$i = $s = $e = 0;
+$i = 0;
+$s = 0;
+$e = 0;
 foreach ($entities as $entity) {
 	$i++;
 	$data = $svc->prepareEntityData($entity);
@@ -18,6 +20,7 @@ foreach ($entities as $entity) {
 		$s++;
 		continue;
 	}
+
 	if ($svc->saveData($data)) {
 		$s++;
 	} else {

@@ -17,6 +17,8 @@ class Bootstrap extends DefaultPluginBootstrap {
 	/**
 	 * Create the SEF lookup tables on activation. Replaces the legacy
 	 * activate.php + run_sql_script() pair (both removed in Elgg 4.x).
+	 *
+	 * @return void
 	 */
 	public function activate() {
 		$db = elgg()->db;
@@ -74,9 +76,11 @@ class Bootstrap extends DefaultPluginBootstrap {
 	 *     plugin used elgg_register_menu_item directly)
 	 *   - per-subtype `view/object/<subtype>` hooks (loops over every
 	 *     registered object subtype at request time)
+	 *
+	 * @return void
 	 */
 	public function init() {
-\elgg_register_menu_item('page', [
+		\elgg_register_menu_item('page', [
 			'name' => 'seo:settings',
 			'href' => 'admin/plugin_settings/hypeseo',
 			'text' => \elgg_echo('admin:seo:settings'),
@@ -84,7 +88,7 @@ class Bootstrap extends DefaultPluginBootstrap {
 			'section' => 'seo',
 		]);
 
-\elgg_register_menu_item('page', [
+		\elgg_register_menu_item('page', [
 			'name' => 'seo:generator',
 			'href' => 'admin/seo/generator',
 			'text' => \elgg_echo('admin:seo:generator'),
@@ -92,7 +96,7 @@ class Bootstrap extends DefaultPluginBootstrap {
 			'section' => 'seo',
 		]);
 
-\elgg_register_menu_item('page', [
+		\elgg_register_menu_item('page', [
 			'name' => 'seo:rules',
 			'href' => 'admin/seo/rules',
 			'text' => \elgg_echo('admin:seo:rules'),
@@ -100,7 +104,7 @@ class Bootstrap extends DefaultPluginBootstrap {
 			'section' => 'seo',
 		]);
 
-\elgg_register_menu_item('page', [
+		\elgg_register_menu_item('page', [
 			'name' => 'seo:sitemap',
 			'href' => 'admin/seo/sitemap',
 			'text' => \elgg_echo('admin:seo:sitemap'),
@@ -111,6 +115,6 @@ class Bootstrap extends DefaultPluginBootstrap {
 		// rel="nofollow" stripping for content rendered for trusted users.
 		// Handler guards internally on object/ view prefix; registered once
 		// for 'all' since elgg_get_registered_entity_types() was removed in 5.x.
-\elgg_register_event_handler('view', 'all', [RelFollow::class, 'trustLinksInContent']);
+		\elgg_register_event_handler('view', 'all', [RelFollow::class, 'trustLinksInContent']);
 	}
 }

@@ -17,6 +17,7 @@ if (!$sitemaps) {
 	if (!is_array($decoded)) {
 		$decoded = @unserialize($sitemaps, ['allowed_classes' => false]);
 	}
+
 	$sitemaps = is_array($decoded) ? $decoded : [];
 }
 
@@ -30,7 +31,7 @@ foreach ($sitemaps as $name) {
 $sitemap = [];
 
 $save_sitemap = function ($filename, $urls) {
-$xml = elgg_view('seo/sitemap/urlset', [
+	$xml = elgg_view('seo/sitemap/urlset', [
 		'urls' => $urls,
 	]);
 
@@ -65,9 +66,9 @@ foreach ($names as $name) {
 		}
 	} else {
 		list($type, $subtype) = explode(':', $name);
-$entities = new ElggBatch('elgg_get_entities', [
+		$entities = new ElggBatch('elgg_get_entities', [
 			'type' => $type,
-			'subtype' => $subtype ? : ELGG_ENTITIES_ANY_VALUE,
+			'subtype' => $subtype ?: ELGG_ENTITIES_ANY_VALUE,
 			'limit' => 0,
 		]);
 
@@ -97,7 +98,7 @@ $entities = new ElggBatch('elgg_get_entities', [
 			];
 
 			$filename = "$type$subtype$index.xml";
-			if (sizeof($urls) == 50000) {
+			if (count($urls) == 50000) {
 				$sitemaps[$filename] = $save_sitemap($filename, $urls);
 				$urls = [];
 				$index++;
@@ -108,7 +109,6 @@ $entities = new ElggBatch('elgg_get_entities', [
 	if (!empty($urls)) {
 		$sitemaps[$filename] = $save_sitemap($filename, $urls);
 	}
-
 }
 
 
@@ -118,7 +118,7 @@ $xml = elgg_view('seo/sitemap/sitemapindex', [
 
 $file = new ElggFile();
 $file->owner_guid = elgg_get_site_entity()->guid;
-$file->setFilename("sitemaps/index.xml");
+$file->setFilename('sitemaps/index.xml');
 $file->open('write');
 $file->write($xml);
 $file->close();

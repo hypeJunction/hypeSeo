@@ -8,12 +8,9 @@ namespace hypeJunction\Seo;
 class Router {
 
 	/**
-	 * Route sitemap.xml
+	 * Rewrite sitemap.xml requests onto seo/sitemaps/index.xml.
 	 *
-	 * @param string $hook   "route:rewrite"
-	 * @param string $type   "sitemap.xml"
-	 * @param array  $return Segments and handler
-	 * @param array  $params Hook params
+	 * @param \Elgg\Event $hook Event with the inbound segments + identifier as params
 	 * @return array
 	 */
 	public static function rewriteSitemapRoute(\Elgg\Event $hook) {
@@ -27,13 +24,10 @@ class Router {
 	}
 
 	/**
-	 * Route SEF URLs to their original path
+	 * Resolve SEF URLs back to the original path before route dispatch.
 	 *
-	 * @param string $hook   "route:rewrite"
-	 * @param string $type   "all"
-	 * @param array  $return Segments and handler
-	 * @param array  $params Hook params
-	 * @return array
+	 * @param \Elgg\Event $hook Event with the inbound segments + identifier as params
+	 * @return array|null
 	 */
 	public static function enforceRewriteRules(\Elgg\Event $hook) {
 
@@ -76,5 +70,4 @@ class Router {
 			'segments' => $segments,
 		];
 	}
-
 }

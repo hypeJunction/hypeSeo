@@ -2,16 +2,16 @@
 
 namespace hypeJunction\Seo;
 
+/**
+ * "head:page" and "robots.txt:site" event handlers.
+ */
 class Page {
 
 	/**
-	 * Setup SEO data in page head
+	 * Inject canonical URL, title, and description metadata into the page head.
 	 *
-	 * @param string $hook   "head"
-	 * @param string $type   "page"
-	 * @param array  $return Page head
-	 * @param array  $params Hook params
-	 * @return array
+	 * @param \Elgg\Event $hook Event with the existing head config as value
+	 * @return array|null
 	 */
 	public static function setHeadMeta(\Elgg\Event $hook) {
 		$return = $hook->getValue();
@@ -42,12 +42,14 @@ class Page {
 		if ($title) {
 			$return['title'] = $title;
 		}
+
 		if ($description) {
 			$return['metas']['description'] = [
 				'name' => 'description',
 				'content' => $description,
 			];
 		}
+
 		if ($keywords) {
 			$return['metas']['keywords'] = [
 				'name' => 'keywords',
@@ -60,10 +62,11 @@ class Page {
 				if (!$content) {
 					continue;
 				}
+
 				$name_parts = explode(':', $name);
 				$namespace = array_shift($name_parts);
 
-				$ogp = array('og', 'fb', 'article', 'profile', 'book', 'music', 'video', 'profile', 'website');
+				$ogp = ['og', 'fb', 'article', 'profile', 'book', 'music', 'video', 'profile', 'website'];
 				if (in_array($namespace, $ogp)) {
 					// OGP tags use 'property=""' attribute
 					$return['metas'][$name] = [
@@ -83,18 +86,15 @@ class Page {
 	}
 
 	/**
-	 * Point robots to sitemap.xml
+	 * Append a Sitemap directive to robots.txt output.
 	 *
-	 * @param string $hook   "robots.txt"
-	 * @param string $type   "site"
-	 * @param array  $return robots.txt
-	 * @param array  $params Hook params
-	 * @return array
+	 * @param \Elgg\Event $hook Event with the existing robots.txt body as value
+	 * @return string
 	 */
 	public static function configureRobots(\Elgg\Event $hook) {
 		$return = $hook->getValue();
 
-		$return .= PHP_EOL . "Sitemap: " . elgg_normalize_url('sitemap.xml') . PHP_EOL;
+		$return .= PHP_EOL . 'Sitemap: ' . elgg_normalize_url('sitemap.xml') . PHP_EOL;
 		return $return;
 	}
 }

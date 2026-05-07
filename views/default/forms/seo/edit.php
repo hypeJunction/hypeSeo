@@ -7,7 +7,7 @@ if (!$uri) {
 $svc = \hypeJunction\Seo\RewriteService::getInstance();
 $data = $svc->getRewriteRulesFromUri($uri);
 if (!$data) {
-	$data = array();
+	$data = [];
 }
 
 echo elgg_format_element('p', [
@@ -56,7 +56,7 @@ echo elgg_view('input/tags', [
 	'label' => elgg_echo('seo:keywords'),
 ]);
 
-$tags = array(
+$tags = [
 	'og:type',
 	'og:title',
 	'og:site_name',
@@ -75,9 +75,9 @@ $tags = array(
 	'twitter:card',
 	'twitter:site',
 	'twitter:creator',
-);
+];
 
-$metatags = (array) elgg_extract('metatags', $data, array());
+$metatags = (array) elgg_extract('metatags', $data, []);
 foreach ($tags as $tag) {
 	if (!array_key_exists($tag, $metatags)) {
 		$metatags[$tag] = '';
@@ -85,7 +85,7 @@ foreach ($tags as $tag) {
 }
 
 foreach ($metatags as $tag => $value) {
-echo elgg_view('input/text', [
+	echo elgg_view('input/text', [
 		'name' => "seo[metatags][$tag]",
 		'value' => $value,
 		'label' => $tag,

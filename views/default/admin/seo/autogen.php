@@ -5,18 +5,18 @@ $count = elgg_get_entities(['count' => true]);
 elgg_require_js('elgg/upgrades');
 
 $warning_string = elgg_echo('seo:autogen:intro');
-$status_string = elgg_echo('seo:autogen:item_count', array($count));
+$status_string = elgg_echo('seo:autogen:item_count', [$count]);
 
 $success_count_string = elgg_echo('seo:autogen:success_count');
 $error_count_string = elgg_echo('seo:autogen:error_count');
 
-$action_link = elgg_view('output/url', array(
+$action_link = elgg_view('output/url', [
 	'text' => elgg_echo('seo:autogen'),
 	'href' => 'action/seo/autogen',
 	'class' => 'elgg-button elgg-button-action mtl',
 	'is_action' => true,
 	'id' => 'upgrade-run',
-));
+]);
 ?>
 <div class="elgg-content">
 	<p class="elgg-text-help"><?php echo $warning_string ?> <?php echo $status_string ?></p>

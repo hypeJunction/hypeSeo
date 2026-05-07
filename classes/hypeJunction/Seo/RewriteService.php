@@ -12,9 +12,9 @@ use stdClass;
 class RewriteService {
 
 	/**
-	 * @var self
+	 * @var self|null
 	 */
-	static $_instance;
+	public static $_instance;
 
 	/**
 	 * @var string
@@ -51,12 +51,16 @@ class RewriteService {
 
 	/**
 	 * Strip leading colons from DBAL param keys (Elgg 4.x used ':param', DBAL 3.x needs 'param').
+	 *
+	 * @param array $params Bound parameters keyed by DBAL placeholder
+	 * @return array
 	 */
 	private function p(array $params): array {
 		$out = [];
 		foreach ($params as $k => $v) {
-			$out[ltrim((string)$k, ':')] = $v;
+			$out[ltrim((string) $k, ':')] = $v;
 		}
+
 		return $out;
 	}
 
@@ -65,16 +69,17 @@ class RewriteService {
 	 * @return self
 	 */
 	public static function getInstance() {
-		if (is_null(self::$_instance)) {
+		if (self::$_instance === null) {
 			self::$_instance = new self(new FileCache());
 		}
+
 		return self::$_instance;
 	}
 
 	/**
 	 * Get SEF equivalent for a given URL
 	 *
-	 * @param string $url    URL
+	 * @param string $url URL
 	 * @return string|false
 	 */
 	public function getTargetUrl($url = '') {
@@ -98,9 +103,10 @@ class RewriteService {
 	public function normalizeUri($url = '') {
 		$url = elgg_normalize_url($url);
 		$site_url = elgg_get_site_url();
-		if (0 !== strpos($url, $site_url)) {
+		if (strpos($url, $site_url) !== 0) {
 			return false;
 		}
+
 		$path = '/' . substr($url, strlen($site_url));
 
 		// strip query elements
@@ -141,7 +147,7 @@ class RewriteService {
 
 		$callback = [$this, 'rowToSefData'];
 		$rows = elgg()->db->getConnection('read')->executeQuery($query, $this->p([':path' => $path]))->fetchAllAssociative();
-		$data = array_map(fn($r) => $callback((object)$r), $rows);
+		$data = array_map(fn($r) => $callback((object) $r), $rows);
 
 		if (!$data) {
 			return false;
@@ -179,7 +185,7 @@ class RewriteService {
 
 		$callback = [$this, 'rowToSefData'];
 		$rows = elgg()->db->getConnection('read')->executeQuery($query, $this->p([':guid' => $guid]))->fetchAllAssociative();
-		$data = array_map(fn($r) => $callback((object)$r), $rows);
+		$data = array_map(fn($r) => $callback((object) $r), $rows);
 
 		if (!$data) {
 			return false;
@@ -190,6 +196,8 @@ class RewriteService {
 
 	/**
 	 * Counts rewrite rules
+	 *
+	 * @param array $options Query filters (e.g. owner_guid)
 	 * @return array|false
 	 */
 	public function countRewriteRules(array $options = []) {
@@ -205,7 +213,7 @@ class RewriteService {
 			return 0;
 		}
 
-		return (int)$row['total'];
+		return (int) $row['total'];
 	}
 
 	/**
@@ -224,6 +232,7 @@ class RewriteService {
 		if ($uri) {
 			$where = '(rt.path LIKE :path OR rt.sef_path LIKE :path OR at.path LIKE :path)';
 		}
+
 		$query = "
 			SELECT rt.*,
 				   ri.*,
@@ -239,7 +248,7 @@ class RewriteService {
 
 		$callback = [$this, 'rowToSefData'];
 		$rows = elgg()->db->getConnection('read')->executeQuery($query, $this->p([':path' => "%{$uri}%"]))->fetchAllAssociative();
-		$data = array_map(fn($r) => $callback((object)$r), $rows);
+		$data = array_map(fn($r) => $callback((object) $r), $rows);
 
 		if (!$data) {
 			return false;
@@ -288,10 +297,12 @@ class RewriteService {
 		if (!is_string($raw) || $raw === '') {
 			return [];
 		}
+
 		$decoded = json_decode($raw, true);
 		if (is_array($decoded)) {
 			return $decoded;
 		}
+
 		$decoded = @unserialize($raw, ['allowed_classes' => false]);
 		return is_array($decoded) ? $decoded : [];
 	}
@@ -309,10 +320,10 @@ class RewriteService {
 		}
 
 		$defaults = [
-			'title' => NULL,
-			'description' => NULL,
-			'keywords' => NULL,
-			'metatags' => NULL,
+			'title' => null,
+			'description' => null,
+			'keywords' => null,
+			'metatags' => null,
 			'custom' => 'no',
 			'aliases' => [],
 			'guid' => 0,
@@ -357,7 +368,7 @@ class RewriteService {
 					custom = :custom
 			";
 			$wconn->executeStatement($query, $this->p($params));
-			$id = (int)$wconn->lastInsertId();
+			$id = (int) $wconn->lastInsertId();
 		} else {
 			$params[':id'] = $data['id'];
 			$query = "
@@ -486,7 +497,7 @@ class RewriteService {
 
 		if ($rows) {
 			foreach ($rows as $row) {
-				$this->deleteData((int)$row['id']);
+				$this->deleteData((int) $row['id']);
 			}
 		}
 	}
@@ -533,7 +544,7 @@ class RewriteService {
 				'{title}' => elgg_get_friendly_title(elgg_get_excerpt($title, 50)),
 				'{username}' => $entity instanceof ElggUser ? $entity->username : '',
 				'{timestamp}' => $entity->time_crated,
-				'{date}' => gmdate("Y-m-d", $entity->time_created),
+				'{date}' => gmdate('Y-m-d', $entity->time_created),
 			];
 			$sef_path = str_replace(array_keys($replacements), array_values($replacements), $pattern);
 
@@ -548,6 +559,7 @@ class RewriteService {
 					$i++;
 					continue;
 				}
+
 				$unique = true;
 			}
 
@@ -559,7 +571,9 @@ class RewriteService {
 	}
 
 	/**
-	 * Normalize data array
+	 * Normalize SEF data array — backfills title/description/keywords/metatags from the entity.
+	 *
+	 * @param array $data Raw SEF row keyed by column name
 	 * @return array
 	 */
 	public function normalizeData(array $data = []) {
@@ -570,19 +584,23 @@ class RewriteService {
 			if (!$data['title']) {
 				$data['title'] = $entity->getDisplayName();
 			}
+
 			if (!$data['description']) {
 				$data['description'] = elgg_get_excerpt($entity->description);
 			}
+
 			if (!$data['keywords']) {
 				$data['keywords'] = implode(',', (array) $entity->tags);
 			}
-$data['metatags'] = elgg_trigger_event_results('metatags', 'discovery', [
+
+			$data['metatags'] = elgg_trigger_event_results('metatags', 'discovery', [
 				'entity' => $entity,
 				'url' => elgg_normalize_url($data['path']),
 			], (array) $data['metatags']);
 			$data['metatags'] = array_filter($data['metatags']);
 			ksort($data['metatags']);
 		}
+
 		return $data;
 	}
 
@@ -598,7 +616,7 @@ $data['metatags'] = elgg_trigger_event_results('metatags', 'discovery', [
 			return;
 		}
 
-		$svc = RewriteService::getInstance();
+		$svc = self::getInstance();
 
 		switch ($event->getName()) {
 			case 'update':
@@ -629,15 +647,16 @@ $data['metatags'] = elgg_trigger_event_results('metatags', 'discovery', [
 		}
 
 		switch ($type) {
-			case 'user' :
-				return "/@{username}";
+			case 'user':
+				return '/@{username}';
 
-			case 'object' :
+			case 'object':
 				if (in_array($subtype, ['comment', 'discussion_reply'])) {
 					return;
 				}
 
-			case 'group' :
+				// fall through — share the slug-derivation block with 'group'.
+			case 'group':
 				$slug = $subtype;
 				$keys = [
 					"seo:item:$type:$subtype",
@@ -659,13 +678,10 @@ $data['metatags'] = elgg_trigger_event_results('metatags', 'discovery', [
 	}
 
 	/**
-	 * Substitute URLs with their SEF equivalent
+	 * Substitute URLs with their SEF equivalent.
 	 *
-	 * @param string $hook   "view_vars"
-	 * @param string $type   "output/url"
-	 * @param array  $return View vars
-	 * @param array  $params Hook params
-	 * @return array
+	 * @param \Elgg\Event $hook Event with the rendered output/url view vars as value
+	 * @return array|null
 	 */
 	public static function rewriteInlineUrls(\Elgg\Event $hook) {
 		$return = $hook->getValue();
@@ -679,7 +695,7 @@ $data['metatags'] = elgg_trigger_event_results('metatags', 'discovery', [
 			return;
 		}
 		
-		$svc = RewriteService::getInstance();
+		$svc = self::getInstance();
 
 		$href = elgg_extract('href', $return);
 
@@ -693,5 +709,4 @@ $data['metatags'] = elgg_trigger_event_results('metatags', 'discovery', [
 
 		return $return;
 	}
-
 }

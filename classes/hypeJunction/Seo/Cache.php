@@ -10,9 +10,30 @@ namespace hypeJunction\Seo;
  */
 interface Cache {
 
-    public function get($key, callable $callback = null, $default = null);
+	/**
+	 * Fetch a cached value, computing it via $callback on miss.
+	 *
+	 * @param string        $key      Cache key
+	 * @param callable|null $callback Producer to populate on miss
+	 * @param mixed         $default  Value returned when neither cache nor callback yields one
+	 * @return mixed
+	 */
+	public function get($key, callable $callback = null, $default = null);
 
-    public function invalidate($key);
+	/**
+	 * Drop a cached value.
+	 *
+	 * @param string $key Cache key
+	 * @return void
+	 */
+	public function invalidate($key);
 
-    public function put($key, $value);
+	/**
+	 * Store a value in the cache.
+	 *
+	 * @param string $key   Cache key
+	 * @param mixed  $value Value to store
+	 * @return void
+	 */
+	public function put($key, $value);
 }

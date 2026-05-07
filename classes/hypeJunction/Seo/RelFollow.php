@@ -2,17 +2,16 @@
 
 namespace hypeJunction\Seo;
 
+/**
+ * "view:object/*" event handler that strips rel="nofollow" for trusted content.
+ */
 class RelFollow {
 
 	/**
-	 * Strip rel="nofollow" for content posted by trusted users
+	 * Strip rel="nofollow" for content posted by trusted users.
 	 *
-	 * @param string $hook   "view"
-	 * @param string $type   "object/<subtype>"
-	 * @param string $return View
-	 * @param array  $params Hook params
-	 *
-	 * @return string
+	 * @param \Elgg\Event $hook Event with the rendered HTML as value and the entity in vars
+	 * @return string|null
 	 */
 	public static function trustLinksInContent(\Elgg\Event $hook) {
 		if (!str_starts_with($hook->getType(), 'object/')) {
@@ -71,6 +70,6 @@ class RelFollow {
 	public static function stripRel($html) {
 		$pattern = '(\<a.*?)(rel=\"nofollow\")(.*?\>)';
 
-		return preg_replace("/$pattern/im", "$1$3", $html);
+		return preg_replace("/$pattern/im", '$1$3', $html);
 	}
 }
