@@ -251,7 +251,7 @@ class RewriteService {
 		$data = array_map(fn($r) => $callback((object) $r), $rows);
 
 		if (!$data) {
-			return false;
+			return [];
 		}
 
 		return $data;

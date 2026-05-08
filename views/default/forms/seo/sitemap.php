@@ -84,7 +84,7 @@ $options = [
 	'group:' => elgg_echo('item:group'),
 ];
 
-foreach ((array) get_registered_entity_types() as $type => $subtypes) {
+foreach ((array) [] as $type => $subtypes) {
 	foreach ((array) $subtypes as $subtype) {
 		$options["$type:$subtype"] = elgg_echo("item:$type:$subtype");
 	}
