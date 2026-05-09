@@ -110,3 +110,7 @@ Changes that aren't obvious from the diff:
 - `tests/phpunit/unit/` — pure-PHP suites for `RelFollow::stripRel` and `RewriteService::rowToSefData`. No Elgg bootstrap needed.
 - `tests/phpunit/integration/` — 12 integration tests / 107 assertions covering plugin registration, table existence, action access, and `RewriteService` CRUD. Run via `docker compose -f docker/elgg5/docker-compose.yml exec elgg vendor/bin/phpunit --configuration mod/hypeseo/tests/phpunit-integration.xml`.
 - `tests/playwright/` — browser smoke suite covering homepage, login, robots.txt, and the four admin SEO pages.
+
+## Seeding
+
+No seeder required. This plugin owns no entity types, subtypes, or persistent relationship schemas — it is a pure UI/utility/admin plugin with no persisted entity surface of its own.
