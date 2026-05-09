@@ -2,7 +2,7 @@
 	"name": "hypejunction/hypeseo",
 	"description": "Tools for search engine optimization",
 	"type": "elgg-plugin",
-	"homepage": "http://hypejunction.com",
+	"homepage": "https://github.com/hypeJunction/hypeseo",
 	"keywords": [
 		"elgg",
 		"plugin",
@@ -15,8 +15,7 @@
 	"license": "GPL-2.0-or-later",
 	"authors": [
 		{
-			"name": "Ismayil Khayredinov",
-			"email": "info@hypejunction.com"
+			"name": "hypeJunction"
 		}
 	],
 	"require": {
