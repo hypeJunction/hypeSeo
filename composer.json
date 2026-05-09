@@ -19,10 +19,11 @@
 		}
 	],
 	"require": {
-		"php": ">=8.2",
+		"php": ">=8.3",
 		"composer/installers": "^2.0",
 		"fire015/flintstone": "^2.0",
-		"elgg/elgg": "^5.0"
+		"elgg/elgg": "~7.0.0",
+		"ext-intl": "*"
 	},
 	"extra": {
 		"elgg-plugin": {
