@@ -2,7 +2,7 @@
 
 $count = elgg_get_entities(['count' => true]);
 
-elgg_require_js('elgg/upgrades');
+elgg_import_esm('elgg/upgrades');
 
 $warning_string = elgg_echo('seo:autogen:intro');
 $status_string = elgg_echo('seo:autogen:item_count', [$count]);
