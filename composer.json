@@ -1,35 +1,35 @@
 {
-    "name": "hypejunction/hypeseo",
-    "description": "Tools for search engine optimization",
-    "type": "elgg-plugin",
-    "homepage": "http://hypejunction.com",
-    "keywords": [
-        "elgg",
-        "plugin",
-        "seo",
-        "search engine optimization",
-        "open graph",
-        "twitter cards",
-        "analytics"
-    ],
-    "license": "GPL-2.0-or-later",
-    "authors": [
-        {
-            "name": "Ismayil Khayredinov",
-            "email": "info@hypejunction.com"
-        }
-    ],
-    "require": {
-        "php": ">=7.0",
-        "composer/installers": "~1.0",
-        "fire015/flintstone": "^2.0"
-    },
-    "extra": {
-        "installer-name": "hypeSeo"
-    },
-    "config": {
-        "allow-plugins": {
-            "composer/installers": true
-        }
-    }
+	"name": "hypejunction/hypeseo",
+	"description": "Tools for search engine optimization",
+	"type": "elgg-plugin",
+	"homepage": "http://hypejunction.com",
+	"keywords": [
+		"elgg",
+		"plugin",
+		"seo",
+		"search engine optimization",
+		"open graph",
+		"twitter cards",
+		"analytics"
+	],
+	"license": "GPL-2.0-or-later",
+	"authors": [
+		{
+			"name": "Ismayil Khayredinov",
+			"email": "info@hypejunction.com"
+		}
+	],
+	"require": {
+		"php": ">=7.0",
+		"composer/installers": "^1.0 || ^2.0",
+		"fire015/flintstone": "^2.0"
+	},
+	"extra": {
+		"installer-name": "hypeSeo"
+	},
+	"config": {
+		"allow-plugins": {
+			"composer/installers": true
+		}
+	}
 }
