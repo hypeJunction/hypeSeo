@@ -9,6 +9,14 @@ concurrency:
   group: tests-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# Runs PHPUnit and Playwright against the per-plugin docker stack that
+# elgg-test-writer scaffolds at <plugin>/docker/. The runner does not
+# install PHP, MySQL, or Elgg natively — `docker compose up` boots the
+# same stack a developer uses locally, so green CI = green local.
+#
+# Both jobs key off file presence (hashFiles): if the plugin has no
+# Playwright suite, the playwright job is silently skipped.
+
 jobs:
   phpunit:
     name: PHPUnit
@@ -52,6 +60,8 @@ jobs:
 
       - name: Install PHPUnit
         run: |
+          # Elgg 3.x/4.x → PHP 7.4 → PHPUnit 9.x
+          # Elgg 5.x+    → PHP 8.1+ → PHPUnit 10.x (override below if needed)
           docker compose -f docker/docker-compose.yml exec -T elgg \
             composer require --dev phpunit/phpunit:^9.6 --no-interaction
 
@@ -66,10 +76,13 @@ jobs:
               $r = $pdo->query("SHOW CREATE TABLE $t")->fetch(PDO::FETCH_ASSOC);
               $pdo->exec(str_replace($t, $new, $r["Create Table"]));
           }
-          foreach (["config","entities","metadata","entity_relationships"] as $t) {
-              if ($pdo->query("SHOW TABLES LIKE \"elgg_$t\"")->rowCount() > 0) {
-                  $pdo->exec("INSERT INTO c_i_elgg_$t SELECT * FROM elgg_$t");
-              }
+          // Seed config/state tables. Schema differs across Elgg versions:
+          // private_settings was merged into entity metadata in Elgg 6+,
+          // so only copy tables that actually exist on this stack.
+          $existing = array_flip($tables);
+          foreach (["config","entities","metadata","private_settings","entity_relationships"] as $t) {
+              if (!isset($existing["elgg_$t"])) continue;
+              $pdo->exec("INSERT INTO c_i_elgg_$t SELECT * FROM elgg_$t");
           }
           echo "Test tables ready." . PHP_EOL;
           '
