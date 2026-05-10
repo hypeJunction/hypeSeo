@@ -1,38 +1,40 @@
 {
-	"name": "hypejunction/hypeseo",
-	"description": "Tools for search engine optimization",
-	"type": "elgg-plugin",
-	"homepage": "https://github.com/hypeJunction/hypeseo",
-	"keywords": [
-		"elgg",
-		"plugin",
-		"seo",
-		"search engine optimization",
-		"open graph",
-		"twitter cards",
-		"analytics"
-	],
-	"license": "GPL-2.0-or-later",
-	"authors": [
-		{
-			"name": "hypeJunction"
-		}
-	],
-	"require": {
-		"php": ">=8.3",
-		"composer/installers": "^2.0",
-		"fire015/flintstone": "^2.0",
-		"elgg/elgg": "~7.0.0",
-		"ext-intl": "*"
-	},
-	"extra": {
-		"elgg-plugin": {
-			"id": "hypeseo"
-		}
-	},
-	"config": {
-		"allow-plugins": {
-			"composer/installers": true
-		}
-	}
+    "name": "hypejunction/hypeseo",
+    "description": "Tools for search engine optimization",
+    "type": "elgg-plugin",
+    "homepage": "https://github.com/hypeJunction/hypeSeo",
+    "keywords": [
+        "elgg",
+        "plugin",
+        "seo",
+        "search engine optimization",
+        "open graph",
+        "twitter cards",
+        "analytics"
+    ],
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "Ismayil Khayredinov",
+            "email": "ismayil.khayredinov@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=8.3",
+        "composer/installers": "^2.0",
+        "fire015/flintstone": "^2.0",
+        "elgg/elgg": "~7.0.0",
+        "ext-intl": "*"
+    },
+    "extra": {
+        "elgg-plugin": {
+            "id": "hypeseo"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "composer/installers": true
+        }
+    },
+    "version": "3.0"
 }
