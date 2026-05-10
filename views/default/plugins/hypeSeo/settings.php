@@ -6,7 +6,7 @@ if (!isset($entity->inline_rewrites)) {
 	$entity->inline_rewrites = true;
 }
 
-echo elgg_view('input/select', [
+echo elgg_view_input('select', [
 	'name' => 'params[inline_rewrites]',
 	'value' => $entity->inline_rewrites,
 	'options_values' => [
@@ -17,7 +17,7 @@ echo elgg_view('input/select', [
 	'help' => elgg_echo('seo:settings:inline_rewrites:help'),
 ]);
 
-echo elgg_view('input/select', [
+echo elgg_view_input('select', [
 	'name' => 'params[redirect_to_canonical]',
 	'value' => $entity->redirect_to_canonical,
 	'options_values' => [
@@ -28,7 +28,7 @@ echo elgg_view('input/select', [
 	'help' => elgg_echo('seo:settings:redirect_to_canonical:help'),
 ]);
 
-echo elgg_view('input/select', [
+echo elgg_view_input('select', [
 	'name' => 'params[rel_follow]',
 	'value' => $entity->rel_follow,
 	'options_values' => [
@@ -41,17 +41,24 @@ echo elgg_view('input/select', [
 
 $svc = \hypeJunction\Seo\RewriteService::getInstance();
 
-// Elgg 3.x dropped the entity_subtypes table; iterate the registered
-// entities map instead.
+$dbprefix = elgg_get_config('dbprefix');
+$sql = "
+	SELECT *
+	FROM {$dbprefix}entity_subtypes
+	ORDER BY subtype
+";
+
+$rows = get_data($sql);
+
 $options = [
 	'user:' => elgg_echo('item:user'),
 	'group:' => elgg_echo('item:group'),
 ];
 
-foreach ((array) [] as $type => $subtypes) {
-	foreach ((array) $subtypes as $subtype) {
-		$options["$type:$subtype"] = elgg_echo("item:$type:$subtype");
-	}
+foreach ($rows as $row) {
+	$type = $row->type;
+	$subtype = $row->subtype;
+	$options["$type:$subtype"] = elgg_echo("item:$type:$subtype");
 }
 
 asort($options);
@@ -62,7 +69,7 @@ echo elgg_format_element('p', [
 
 foreach ($options as $key => $label) {
 	list($type, $subtype) = explode(':', $key);
-	echo elgg_view('input/text', [
+	echo elgg_view_input('text', [
 		'name' => "params[$key]",
 		'value' => $svc->getTargetUrlPattern($type, $subtype),
 		'label' => $label,

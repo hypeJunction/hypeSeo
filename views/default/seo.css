@@ -1,17 +1,6 @@
-:root {
-	--seo-dialog-max-height: 600px;
-	--seo-list-item-gap: 4px;
-	--seo-path-max-width: 250px;
-	--seo-path-padding: 2px;
-	--seo-path-border-radius: 3px;
-	--seo-font-size-small: 90%;
-	--seo-bg-muted: #f4f4f4;
-	--seo-border-color: #e1e1e1;
-}
-
 #colorbox .elgg-form-seo-edit {
-	max-height: var(--seo-dialog-max-height);
-	overflow-y: auto;
+    max-height: 600px;
+    overflow-y: auto;
 }
 
 .seo-list {
@@ -20,11 +9,11 @@
 }
 
 .seo-list > li:not(:last-child) {
-	margin-bottom: var(--seo-list-item-gap);
+	margin-bottom: 4px;
 }
 
 .seo-path {
-	max-width: var(--seo-path-max-width);
+	max-width: 250px;
 	white-space: nowrap;
 	text-overflow: ellipsis;
 	text-indent: unset;
@@ -32,10 +21,10 @@
 	display: inline-block;
 	overflow: hidden;
 	vertical-align: middle;
-	padding: var(--seo-path-padding);
-	background: var(--seo-bg-muted);
-	border-radius: var(--seo-path-border-radius);
-	font-size: var(--seo-font-size-small);
+	padding: 2px;
+	background: #f4f4f4;
+	border-radius: 3px;
+	font-size: 90%;
 	font-family: 'Courier', monospace;
 }
 
@@ -47,6 +36,6 @@
 .seo-search-form {
 	margin: 2rem auto;
 	padding: 1rem;
-	background: var(--seo-bg-muted);
-	border: 1px solid var(--seo-border-color);
+	background: #f4f4f4;
+	border: 1px solid #e1e1e1;
 }

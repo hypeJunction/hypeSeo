@@ -14,7 +14,7 @@ if (!elgg_is_active_plugin('hypeDiscovery') && elgg_get_config('walled_garden'))
 
 $file = new ElggFile();
 $file->owner_guid = elgg_get_site_entity()->guid;
-$file->setFilename('sitemaps/index.xml');
+$file->setFilename("sitemaps/index.xml");
 
 if ($file->exists()) {
 	$link = elgg_view('output/url', [
@@ -47,20 +47,20 @@ $get_static_urls('footer');
 
 $title = elgg_echo('seo:sitemap:static');
 
-$mod = elgg_view('input/plaintext', [
+$mod = elgg_view_input('plaintext', [
 	'name' => 'static',
 	'value' => implode(PHP_EOL, array_filter(array_unique($static))),
 	'label' => elgg_echo('seo:sitemap:urls'),
 ]);
 
-$mod .= elgg_view('input/select', [
+$mod .= elgg_view_input('select', [
 	'name' => 'priority[static]',
 	'value' => 1,
 	'options' => range(0, 1, 0.1),
 	'label' => elgg_echo('seo:sitemap:priority'),
 ]);
 
-$mod .= elgg_view('input/select', [
+$mod .= elgg_view_input('select', [
 	'name' => 'changefreq[static]',
 	'value' => 'monthly',
 	'options' => [
@@ -77,17 +77,24 @@ $mod .= elgg_view('input/select', [
 
 echo elgg_view_module('aside', $title, $mod);
 
-// Elgg 3.x dropped the entity_subtypes table; subtypes live in the
-// registered entities map instead.
+$dbprefix = elgg_get_config('dbprefix');
+$sql = "
+	SELECT *
+	FROM {$dbprefix}entity_subtypes
+	ORDER BY subtype
+";
+
+$rows = get_data($sql);
+
 $options = [
 	'user:' => elgg_echo('item:user'),
 	'group:' => elgg_echo('item:group'),
 ];
 
-foreach ((array) [] as $type => $subtypes) {
-	foreach ((array) $subtypes as $subtype) {
-		$options["$type:$subtype"] = elgg_echo("item:$type:$subtype");
-	}
+foreach ($rows as $row) {
+	$type = $row->type;
+	$subtype = $row->subtype;
+	$options["$type:$subtype"] = elgg_echo("item:$type:$subtype");
 }
 
 asort($options);
@@ -100,14 +107,14 @@ foreach ($options as $key => $label) {
 
 	$mod = '';
 
-	$mod .= elgg_view('input/select', [
+	$mod .= elgg_view_input('select', [
 		'name' => "priority[$key]",
 		'value' => 0.8,
 		'options' => range(0, 1, 0.1),
 		'label' => elgg_echo('seo:sitemap:priority'),
 	]);
 
-	$mod .= elgg_view('input/select', [
+	$mod .= elgg_view_input('select', [
 		'name' => "changefreq[$key]",
 		'value' => 'daily',
 		'options' => [
@@ -125,7 +132,7 @@ foreach ($options as $key => $label) {
 	echo elgg_view_module('info', $label, $mod);
 }
 
-echo elgg_view('input/submit', [
+echo elgg_view_input('submit', [
 	'field_class' => 'elgg-foot',
 	'value' => elgg_echo('seo:sitemap:generate'),
 ]);

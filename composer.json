@@ -36,5 +36,5 @@
             "composer/installers": true
         }
     },
-    "version": "3.0"
+    "version": "7.0.0"
 }

@@ -2,18 +2,62 @@
 
 namespace hypeJunction\Seo;
 
+use ElggFile;
+
 /**
  * @access private
  */
 class Router {
 
 	/**
-	 * Rewrite sitemap.xml requests onto seo/sitemaps/index.xml.
+	 * SEO page handler
+	 * /seo/edit
 	 *
-	 * @param \Elgg\Event $hook Event with the inbound segments + identifier as params
+	 * @param array $segments URL segments
+	 * @return bool
+	 */
+	public static function handleSeoPages($segments) {
+
+		$page = array_shift($segments);
+
+		switch ($page) {
+			case 'edit' :
+				echo elgg_view_resource('seo/edit');
+				return true;
+
+			case 'sitemaps' :
+				$filename = array_shift($segments);
+
+				$file = new ElggFile();
+				$file->owner_guid = elgg_get_site_entity()->guid;
+				$file->setFilename("sitemaps/$filename");
+
+				if (!$file->exists()) {
+					return;
+				}
+
+				header('Content-Type: application/xml', true);
+				
+				$file->open('read');
+				echo $file->grabFile();
+				$file->close();
+				exit;
+		}
+
+		return false;
+	}
+
+
+	/**
+	 * Route sitemap.xml
+	 *
+	 * @param string $hook   "route:rewrite"
+	 * @param string $type   "sitemap.xml"
+	 * @param array  $return Segments and handler
+	 * @param array  $params Hook params
 	 * @return array
 	 */
-	public static function rewriteSitemapRoute(\Elgg\Event $hook) {
+	public static function rewriteSitemapRoute($hook, $type, $return, $params) {
 		return [
 			'identifier' => 'seo',
 			'segments' => [
@@ -24,15 +68,18 @@ class Router {
 	}
 
 	/**
-	 * Resolve SEF URLs back to the original path before route dispatch.
+	 * Route SEF URLs to their original path
 	 *
-	 * @param \Elgg\Event $hook Event with the inbound segments + identifier as params
-	 * @return array|null
+	 * @param string $hook   "route:rewrite"
+	 * @param string $type   "all"
+	 * @param array  $return Segments and handler
+	 * @param array  $params Hook params
+	 * @return array
 	 */
-	public static function enforceRewriteRules(\Elgg\Event $hook) {
+	public static function enforceRewriteRules($hook, $type, $return, $params) {
 
-		$identifier = $hook->getParam('identifier');
-		$segments = (array) $hook->getParam('segments', []);
+		$identifier = elgg_extract('identifier', $params);
+		$segments = (array) elgg_extract('segments', $params, []);
 
 		array_unshift($segments, $identifier);
 		
@@ -53,12 +100,8 @@ class Router {
 			return;
 		}
 
-		if (elgg_normalize_url($sef_path) !== $url && elgg_get_plugin_setting('redirect_to_canonical', 'hypeseo')) {
-			// route:rewrite is a hook handler, not an action, so the
-			// elgg_redirect_response() helper isn't usable here. Issue a
-			// raw redirect and exit before the original route resolves.
-			header('Location: ' . elgg_normalize_url($sef_path), true, 302);
-			exit;
+		if (elgg_normalize_url($sef_path) !== $url && elgg_get_plugin_setting('redirect_to_canonical', 'hypeSeo')) {
+			forward($sef_path);
 		}
 
 		//list($route, $guid) = explode('/', trim($original_path, '/'));
@@ -70,4 +113,5 @@ class Router {
 			'segments' => $segments,
 		];
 	}
+
 }

@@ -3,23 +3,20 @@
 namespace hypeJunction\Seo;
 
 use Elgg\Cache\Pool;
-use Flintstone\Flintstone;
 
-class FileCache implements Pool {
+class Memcache implements Pool {
 
 	/**
-	 * @var Flintstone
+	 * @var \ElggMemcache
 	 */
-	private $cache;
-
+	private $memcache;
+	
 	public function __construct() {
-		$this->cache = new Flintstone('sef_data_cache', [
-			'dir' => elgg_get_config('dataroot'),
-		]);
+		$this->memcache = new \ElggMemcache('sef_data_cache');
 	}
 
 	public function get($key, callable $callback = null, $default = null) {
-		$value = $this->cache->get($key);
+		$value = $this->memcache->load($key);
 		if (!isset($value)) {
 			$value = $default;
 		}
@@ -30,11 +27,11 @@ class FileCache implements Pool {
 	}
 
 	public function invalidate($key) {
-		$this->cache->delete($key);
+		$this->memcache->delete($key);
 	}
 
 	public function put($key, $value) {
-		$this->cache->set($key, $value);
+		$this->memcache->save($key, $value, 0);
 	}
 
 }

@@ -1,9 +1,9 @@
 <?php
 
 echo elgg_view('output/url', [
-	'href' => 'admin/seo/add_rule',
-	'text' => elgg_echo('admin:seo:add_rule'),
-	'class' => 'elgg-button elgg-button-action',
+    'href' => 'admin/seo/add_rule',
+    'text' => elgg_echo('admin:seo:add_rule'),
+    'class' => 'elgg-button elgg-button-action',
 ]);
 
 $limit = get_input('limit', 25);
@@ -19,8 +19,8 @@ $rules = new \ElggBatch([$svc, 'getRewriteRules'], [
 echo elgg_view_form('seo/search', [
 	'disable_security' => true,
 	'method' => 'GET',
-	'action' => elgg_get_current_url(),
-	'class' => 'seo-search-form'
+	'action' => current_page_url(),
+    'class' => 'seo-search-form'
 ]);
 
 ?>
@@ -28,9 +28,9 @@ echo elgg_view_form('seo/search', [
 	<thead>
 		<tr>
 			<th></th>
-			<th><?php echo elgg_echo('seo:paths') ?></th>
-			<th><?php echo elgg_echo('seo:sef_path') ?></th>
-			<th><?php echo elgg_echo('seo:metatags') ?></th>
+			<th><?= elgg_echo('seo:paths') ?></th>
+			<th><?= elgg_echo('seo:sef_path') ?></th>
+			<th><?= elgg_echo('seo:metatags') ?></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -47,9 +47,9 @@ echo elgg_view_form('seo/search', [
 					<?php
 					echo elgg_view('output/url', [
 						'text' => elgg_view_icon('pencil'),
-						'href' => elgg_http_add_url_query_elements('seo/edit', [
+						'href' => elgg_http_add_url_query_elements('seo/edit', array(
 							'page_uri' => $data['path'],
-						]),
+						)),
 						'class' => 'elgg-lightbox',
 						'data-colorbox-opts' => json_encode([
 							'maxWidth' => '600px',
@@ -78,7 +78,6 @@ echo elgg_view_form('seo/search', [
 						]);
 						$aliases[] = elgg_format_element('li', [], $alias);
 					}
-
 					echo elgg_format_element('ul', [
 						'class' => 'seo-list',
 					], implode('', $aliases));
@@ -101,7 +100,6 @@ echo elgg_view_form('seo/search', [
 					foreach ($data['metatags'] as $key => $value) {
 						$meta[] = "<b>$key</b>: $value";
 					}
-
 					echo elgg_format_element('div', [
 						'class' => 'seo-metatags',
 					], implode('<br />', $meta));
