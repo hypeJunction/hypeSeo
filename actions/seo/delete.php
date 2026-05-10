@@ -7,7 +7,7 @@ $uri = get_input('uri');
 $svc = RewriteService::getInstance();
 $data = $svc->getRewriteRulesFromUri($uri);
 if ($data && $svc->deleteData($data['id'])) {
-	system_message(elgg_echo('seo:delete:success'));
-} else {
-	register_error(elgg_echo('seo:delete:error'));
+	return elgg_ok_response('', elgg_echo('seo:delete:success'));
 }
+
+return elgg_error_response(elgg_echo('seo:delete:error'));

@@ -1,6 +1,6 @@
 SEO Tools for Elgg
 ==================
-![Elgg 2.2](https://img.shields.io/badge/Elgg-2.2-orange.svg?style=flat-square)
+![Elgg 7.x](https://img.shields.io/badge/Elgg-7.x-orange.svg?style=flat-square)
 
 ## Features
 
@@ -26,3 +26,9 @@ SEO Tools for Elgg
 ## Acknowledgements
 
 Initial development of the plugin was sponsored by Bodyology Virtual Campus http://bodyologymassagecourses.co.uk/
+
+## Compatibility
+
+| Plugin version | Elgg version |
+|---|---|
+| current | 7.x |

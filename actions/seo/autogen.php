@@ -8,9 +8,11 @@ $entities = new ElggBatch('elgg_get_entities', [
 	'limit' => 100,
 	'order_by' => 'e.guid ASC',
 	'offset' => (int) get_input('offset', 0),
-		]);
+]);
 
-$i = $s = $e = 0;
+$i = 0;
+$s = 0;
+$e = 0;
 foreach ($entities as $entity) {
 	$i++;
 	$data = $svc->prepareEntityData($entity);
@@ -18,6 +20,7 @@ foreach ($entities as $entity) {
 		$s++;
 		continue;
 	}
+
 	if ($svc->saveData($data)) {
 		$s++;
 	} else {
@@ -25,12 +28,7 @@ foreach ($entities as $entity) {
 	}
 }
 
-if (elgg_is_xhr()) {
-	echo json_encode([
-		'numSuccess' => $s,
-		'numErrors' => $e,
-	]);
-}
-
-system_message(elgg_echo('seo:autogen:count', [$s, $i]));
-forward(REFERRER);
+return elgg_ok_response(
+	['numSuccess' => $s, 'numErrors' => $e],
+	elgg_echo('seo:autogen:count', [$s, $i])
+);
