@@ -17,4 +17,8 @@ tests/.phpunit.result.cache
 tests/.phpunit.cache/
 tests/playwright/node_modules/
 tests/playwright/playwright-report/
-tests/playwright/test-results/docker/.env
+tests/playwright/test-results/
+tests/playwright/package-lock.json
+
+# Docker scaffold local env
+docker/.env
