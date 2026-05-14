@@ -1,6 +1,6 @@
 <?php
 
-echo elgg_view_input('hidden', [
+echo elgg_view('input/hidden', [
 	'name' => 'seo[admin_defined]',
 	'value' => true,
 ]);

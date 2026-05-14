@@ -7,11 +7,13 @@ const ADMIN_PASS = process.env.ELGG_ADMIN_PASSWORD || 'admin12345';
 
 async function login(page) {
   await page.goto('/login');
-  await page.fill('input[name="username"]', ADMIN_USER);
-  await page.fill('input[name="password"]', ADMIN_PASS);
+  // Elgg 3.x renders the login form twice (sidebar + main). Grab the first.
+  const form = page.locator('form.elgg-form-login').last();
+  await form.locator('input[name="username"]').fill(ADMIN_USER);
+  await form.locator('input[name="password"]').fill(ADMIN_PASS);
   await Promise.all([
     page.waitForLoadState('networkidle'),
-    page.click('input[type="submit"], button[type="submit"]'),
+    form.locator('input[type="submit"], button[type="submit"]').first().click(),
   ]);
 }
 
@@ -26,7 +28,9 @@ test.describe('hypeSeo smoke', () => {
   test('login page renders', async ({ page }) => {
     const response = await page.goto('/login');
     expect(response?.ok()).toBeTruthy();
-    await expect(page.locator('input[name="username"]')).toBeVisible();
+    await expect(
+      page.locator('form.elgg-form-login input[name="username"]').last()
+    ).toBeVisible();
   });
 
   test('robots.txt advertises the sitemap', async ({ request }) => {

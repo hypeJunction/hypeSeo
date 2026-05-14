@@ -6,11 +6,19 @@ set_time_limit(0);
 
 $svc = RewriteService::getInstance();
 
-$sitemaps = elgg_get_plugin_setting('sitemaps', 'hypeSeo');
+$sitemaps = elgg_get_plugin_setting('sitemaps', 'hypeseo');
 if (!$sitemaps) {
 	$sitemaps = [];
 } else {
-	$sitemaps = unserialize($sitemaps);
+	// Prefer JSON (new format). Fall back to legacy PHP-serialized value
+	// from pre-3.x installs, restricted to scalars to prevent object
+	// injection on tampered settings.
+	$decoded = json_decode($sitemaps, true);
+	if (!is_array($decoded)) {
+		$decoded = @unserialize($sitemaps, ['allowed_classes' => false]);
+	}
+
+	$sitemaps = is_array($decoded) ? $decoded : [];
 }
 
 foreach ($sitemaps as $name) {
@@ -60,7 +68,7 @@ foreach ($names as $name) {
 		list($type, $subtype) = explode(':', $name);
 		$entities = new ElggBatch('elgg_get_entities', [
 			'type' => $type,
-			'subtype' => $subtype ? : ELGG_ENTITIES_ANY_VALUE,
+			'subtype' => $subtype ?: ELGG_ENTITIES_ANY_VALUE,
 			'limit' => 0,
 		]);
 
@@ -90,7 +98,7 @@ foreach ($names as $name) {
 			];
 
 			$filename = "$type$subtype$index.xml";
-			if (sizeof($urls) == 50000) {
+			if (count($urls) == 50000) {
 				$sitemaps[$filename] = $save_sitemap($filename, $urls);
 				$urls = [];
 				$index++;
@@ -101,7 +109,6 @@ foreach ($names as $name) {
 	if (!empty($urls)) {
 		$sitemaps[$filename] = $save_sitemap($filename, $urls);
 	}
-
 }
 
 
@@ -111,11 +118,11 @@ $xml = elgg_view('seo/sitemap/sitemapindex', [
 
 $file = new ElggFile();
 $file->owner_guid = elgg_get_site_entity()->guid;
-$file->setFilename("sitemaps/index.xml");
+$file->setFilename('sitemaps/index.xml');
 $file->open('write');
 $file->write($xml);
 $file->close();
 
-elgg_set_plugin_setting('sitemaps', serialize(array_keys($sitemaps)), 'hypeSeo');
+elgg_get_plugin_from_id('hypeseo')->setSetting('sitemaps', json_encode(array_keys($sitemaps)));
 
-system_message(elgg_echo('seo:sitemap:generate:success'));
+return elgg_ok_response('', elgg_echo('seo:sitemap:generate:success'));

@@ -4,10 +4,9 @@ $data = get_input('seo');
 
 $svc = \hypeJunction\Seo\RewriteService::getInstance();
 
-$path = $data['path'];
+$path = $data['path'] ?? '';
 if (!$path) {
-	register_error(elgg_echo('seo:edit:error'));
-	forward(REFERRER);
+	return elgg_error_response(elgg_echo('seo:edit:error'));
 }
 
 $sef_data = $svc->getRewriteRulesFromUri($data['path']);
@@ -18,8 +17,7 @@ if (!$sef_data) {
 // Validate SEF uniqueness
 $sef_alt_data = $svc->getRewriteRulesFromUri($data['sef_path']);
 if ($sef_alt_data && !in_array($data['path'], $sef_alt_data['aliases'])) {
-	register_error(elgg_echo('seo:edit:not_unique'));
-	forward(REFERRER);
+	return elgg_error_response(elgg_echo('seo:edit:not_unique'));
 }
 
 $data['path'] = $svc->normalizeUri($data['path']);
@@ -39,10 +37,8 @@ foreach ($metatags as $key => $value) {
 	$sef_data['metatags'][$key] = $value;
 }
 
-if ($svc->saveData($sef_data)) {
-	system_message(elgg_echo('seo:edit:success'));
-} else {
-	register_error(elgg_echo('seo:edit:error'));
+if (!$svc->saveData($sef_data)) {
+	return elgg_error_response(elgg_echo('seo:edit:error'));
 }
 
-forward(REFERRER);
+return elgg_ok_response('', elgg_echo('seo:edit:success'));
