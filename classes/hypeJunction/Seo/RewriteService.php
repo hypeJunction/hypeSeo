@@ -101,6 +101,10 @@ class RewriteService {
 	 * @return string|false
 	 */
 	public function normalizeUri($url = '') {
+		// elgg_normalize_url() requires string in 7.x (was lenient in 3.x).
+		if (!is_string($url) || $url === '') {
+			return false;
+		}
 		$url = elgg_normalize_url($url);
 		$site_url = elgg_get_site_url();
 		if (strpos($url, $site_url) !== 0) {
