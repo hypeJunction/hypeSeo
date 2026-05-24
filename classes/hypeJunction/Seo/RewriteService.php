@@ -105,6 +105,7 @@ class RewriteService {
 		if (!is_string($url) || $url === '') {
 			return false;
 		}
+
 		$url = elgg_normalize_url($url);
 		$site_url = elgg_get_site_url();
 		if (strpos($url, $site_url) !== 0) {
