@@ -42,7 +42,7 @@ class RewriteService {
 	 * @param Cache $routes_cache Cache
 	 */
 	public function __construct(Cache $routes_cache) {
-		$dbprefix = elgg_get_config('dbprefix');
+		$dbprefix = \elgg_get_config('dbprefix');
 		$this->table = "{$dbprefix}sef_routes";
 		$this->aliases_table = "{$dbprefix}sef_aliases";
 		$this->data_table = "{$dbprefix}sef_data";
@@ -75,7 +75,7 @@ class RewriteService {
 			$target = $data['sef_path'];
 		}
 
-		return $target ? elgg_normalize_url($target) : false;
+		return $target ? \elgg_normalize_url($target) : false;
 	}
 
 	/**
@@ -85,8 +85,8 @@ class RewriteService {
 	 * @return string|false
 	 */
 	public function normalizeUri($url = '') {
-		$url = elgg_normalize_url($url);
-		$site_url = elgg_get_site_url();
+		$url = \elgg_normalize_url($url);
+		$site_url = \elgg_get_site_url();
 		if (0 !== strpos($url, $site_url)) {
 			return false;
 		}
@@ -207,11 +207,11 @@ $data = elgg()->db->getData($query, $callback, [
 	 */
 	public function getRewriteRules(array $options = []) {
 
-		$limit = (int) elgg_extract('limit', $options, 25);
-		$offset = (int) elgg_extract('offset', $options, 0);
+		$limit = (int) \elgg_extract('limit', $options, 25);
+		$offset = (int) \elgg_extract('offset', $options, 0);
 
 		$where = '(1 = 1)';
-		$uri = elgg_extract('uri', $options);
+		$uri = \elgg_extract('uri', $options);
 		if ($uri) {
 			$where = '(rt.path LIKE :path OR rt.sef_path LIKE :path OR at.path LIKE :path)';
 		}
@@ -518,7 +518,7 @@ $rows = elgg()->db->getData("
 			$title = $entity->getDisplayName() ?: $entity->description;
 			$replacements = [
 				'{guid}' => $entity->guid,
-				'{title}' => elgg_get_friendly_title(elgg_get_excerpt($title, 50)),
+				'{title}' => \elgg_get_friendly_title(\elgg_get_excerpt($title, 50)),
 				'{username}' => $entity instanceof ElggUser ? $entity->username : '',
 				'{timestamp}' => $entity->time_crated,
 				'{date}' => gmdate("Y-m-d", $entity->time_created),
@@ -551,7 +551,7 @@ $rows = elgg()->db->getData("
 	 * @return array
 	 */
 	public function normalizeData(array $data = []) {
-		$guid = elgg_extract('guid', $data);
+		$guid = \elgg_extract('guid', $data);
 		$entity = get_entity($guid);
 
 		if ($entity) {
@@ -559,14 +559,14 @@ $rows = elgg()->db->getData("
 				$data['title'] = $entity->getDisplayName();
 			}
 			if (!$data['description']) {
-				$data['description'] = elgg_get_excerpt($entity->description);
+				$data['description'] = \elgg_get_excerpt($entity->description);
 			}
 			if (!$data['keywords']) {
 				$data['keywords'] = implode(',', (array) $entity->tags);
 			}
-$data['metatags'] = elgg_trigger_plugin_hook('metatags', 'discovery', [
+$data['metatags'] = \elgg_trigger_plugin_hook('metatags', 'discovery', [
 				'entity' => $entity,
-				'url' => elgg_normalize_url($data['path']),
+				'url' => \elgg_normalize_url($data['path']),
 			], (array) $data['metatags']);
 			$data['metatags'] = array_filter($data['metatags']);
 			ksort($data['metatags']);
@@ -611,7 +611,7 @@ $data['metatags'] = elgg_trigger_plugin_hook('metatags', 'discovery', [
 	 * @return string
 	 */
 	public function getTargetUrlPattern($type, $subtype = '') {
-		$setting = elgg_get_plugin_setting("$type:$subtype", 'hypeseo');
+		$setting = \elgg_get_plugin_setting("$type:$subtype", 'hypeseo');
 		if (!is_null($setting)) {
 			return $setting;
 		}
@@ -640,13 +640,13 @@ $data['metatags'] = elgg_trigger_plugin_hook('metatags', 'discovery', [
 				];
 
 				foreach ($keys as $key) {
-					if (elgg_language_key_exists($key, 'en')) {
-						$slug = elgg_echo($key, [], 'en');
+					if (\elgg_language_key_exists($key, 'en')) {
+						$slug = \elgg_echo($key, [], 'en');
 						break;
 					}
 				}
 
-				$slug = elgg_get_friendly_title(strtolower($slug));
+				$slug = \elgg_get_friendly_title(strtolower($slug));
 				return "/$slug/{guid}-{title}";
 		}
 	}
@@ -668,13 +668,13 @@ $data['metatags'] = elgg_trigger_plugin_hook('metatags', 'discovery', [
 			return;
 		}
 
-		if (!elgg_get_plugin_setting('inline_rewrites', 'hypeseo', true)) {
+		if (!\elgg_get_plugin_setting('inline_rewrites', 'hypeseo', true)) {
 			return;
 		}
 		
 		$svc = RewriteService::getInstance();
 
-		$href = elgg_extract('href', $return);
+		$href = \elgg_extract('href', $return);
 
 		// Not using DB here, as it is way too heavy on performance
 		$sef = $svc->getTargetUrl($href, false);

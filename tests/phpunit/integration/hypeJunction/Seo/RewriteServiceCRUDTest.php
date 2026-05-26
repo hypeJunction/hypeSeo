@@ -120,7 +120,7 @@ class RewriteServiceCRUDTest extends IntegrationTestCase {
 	public function testDeleteDataFromGUIDRemovesRoutesForEntity(): void {
 		$admin = $this->createUser();
 		$admin->makeAdmin();
-		elgg_get_session()->setLoggedInUser($admin);
+		\elgg_get_session()->setLoggedInUser($admin);
 
 		$object = $this->createObject([
 			'subtype' => 'blog',
@@ -137,7 +137,7 @@ class RewriteServiceCRUDTest extends IntegrationTestCase {
 
 		$this->assertFalse($this->svc->getRewriteRulesFromUri($path));
 
-		elgg_get_session()->removeLoggedInUser();
+		\elgg_get_session()->removeLoggedInUser();
 	}
 
 	public function testSaveDataMetatagsStoredAsJson(): void {

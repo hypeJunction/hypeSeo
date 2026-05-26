@@ -42,7 +42,7 @@ class MigratePluginId implements Batch {
 			return $result;
 		}
 
-		$new = elgg_get_plugin_from_id(self::NEW_ID);
+		$new = \elgg_get_plugin_from_id(self::NEW_ID);
 		if (!$new instanceof \ElggPlugin) {
 			$result->addError(self::NEW_ID . ' plugin entity not found; cannot migrate settings');
 			$result->markComplete();
@@ -74,7 +74,7 @@ class MigratePluginId implements Batch {
 	}
 
 	private function getOldPluginEntity(): ?\ElggPlugin {
-$entities = elgg_get_entities([
+$entities = \elgg_get_entities([
 			'type' => 'object',
 			'subtype' => 'plugin',
 			'metadata_name_value_pairs' => [

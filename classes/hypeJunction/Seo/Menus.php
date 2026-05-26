@@ -19,15 +19,15 @@ class Menus {
 		$return = $hook->getValue();
 
 
-		if (!elgg_is_admin_logged_in()) {
+		if (!\elgg_is_admin_logged_in()) {
 			return;
 		}
 
 $return[] = ElggMenuItem::factory([
 			'name' => 'seo',
-			'text' => elgg_view_icon('search'),
-			'title' => elgg_echo('seo:edit'),
-'href' => elgg_http_add_url_query_elements('seo/edit', array(
+			'text' => \elgg_view_icon('search'),
+			'title' => \elgg_echo('seo:edit'),
+'href' => \elgg_http_add_url_query_elements('seo/edit', array(
 				'page_uri' => current_page_url(),
 			)),
 			'link_class' => 'elgg-lightbox',

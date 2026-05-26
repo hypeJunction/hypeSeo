@@ -16,7 +16,7 @@ class RelFollow {
 	 */
 	public static function trustLinksInContent(\Elgg\Hook $hook) {
 		$vars = $hook->getParam('vars', []);
-		$entity = elgg_extract('entity', (array) $vars);
+		$entity = \elgg_extract('entity', (array) $vars);
 
 		if (!$entity instanceof \ElggEntity) {
 			return null;
@@ -50,7 +50,7 @@ class RelFollow {
 			return true;
 		}
 
-		if (elgg_is_active_plugin('trusted_users')) {
+		if (\elgg_is_active_plugin('trusted_users')) {
 			return trusted_users_is_trusted($owner);
 		}
 

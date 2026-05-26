@@ -13,7 +13,7 @@ class FileCache implements Cache {
 
 	public function __construct() {
 $this->cache = new Flintstone('sef_data_cache', [
-			'dir' => elgg_get_config('dataroot'),
+			'dir' => \elgg_get_config('dataroot'),
 		]);
 	}
 
