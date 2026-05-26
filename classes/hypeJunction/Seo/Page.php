@@ -19,7 +19,7 @@ class Page {
 
 		$svc = RewriteService::getInstance();
 
-		$url = elgg_get_current_url();
+		$url = \elgg_get_current_url();
 		$data = $svc->getRewriteRulesFromUri($url);
 		if (!$data) {
 			return;
@@ -27,17 +27,17 @@ class Page {
 
 		$data = $svc->normalizeData($data);
 
-		$sef_path = elgg_extract('sef_path', $data);
-		if (elgg_normalize_url($sef_path) != $url) {
+		$sef_path = \elgg_extract('sef_path', $data);
+		if (\elgg_normalize_url($sef_path) != $url) {
 			$return['links']['canonical'] = [
 				'rel' => 'canonical',
-				'href' => elgg_normalize_url($sef_path),
+				'href' => \elgg_normalize_url($sef_path),
 			];
 		}
 
-		$title = elgg_extract('title', $data);
-		$description = elgg_extract('description', $data);
-		$keywords = elgg_extract('keywords', $data);
+		$title = \elgg_extract('title', $data);
+		$description = \elgg_extract('description', $data);
+		$keywords = \elgg_extract('keywords', $data);
 
 		if ($title) {
 			$return['title'] = $title;
@@ -94,7 +94,7 @@ class Page {
 	public static function configureRobots(\Elgg\Event $hook) {
 		$return = $hook->getValue();
 
-		$return .= PHP_EOL . 'Sitemap: ' . elgg_normalize_url('sitemap.xml') . PHP_EOL;
+		$return .= PHP_EOL . 'Sitemap: ' . \elgg_normalize_url('sitemap.xml') . PHP_EOL;
 		return $return;
 	}
 }

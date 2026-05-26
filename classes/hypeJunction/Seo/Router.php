@@ -37,7 +37,7 @@ class Router {
 		array_unshift($segments, $identifier);
 		
 		$path = implode('/', $segments);
-		$url = elgg_get_site_url()  . $path;
+		$url = \elgg_get_site_url()  . $path;
 
 		$svc = RewriteService::getInstance();
 		$data = $svc->getRewriteRulesFromUri($url);
@@ -46,18 +46,18 @@ class Router {
 			return;
 		}
 		
-		$sef_path = elgg_extract('sef_path', $data);
-		$original_path = elgg_extract('path', $data);
+		$sef_path = \elgg_extract('sef_path', $data);
+		$original_path = \elgg_extract('path', $data);
 		
-		if (elgg_normalize_url($sef_path) == elgg_normalize_url($original_path)) {
+		if (\elgg_normalize_url($sef_path) == \elgg_normalize_url($original_path)) {
 			return;
 		}
 
-		if (elgg_normalize_url($sef_path) !== $url && elgg_get_plugin_setting('redirect_to_canonical', 'hypeseo')) {
+		if (\elgg_normalize_url($sef_path) !== $url && \elgg_get_plugin_setting('redirect_to_canonical', 'hypeseo')) {
 			// route:rewrite is a hook handler, not an action, so the
 			// elgg_redirect_response() helper isn't usable here. Issue a
 			// raw redirect and exit before the original route resolves.
-			header('Location: ' . elgg_normalize_url($sef_path), true, 302);
+			header('Location: ' . \elgg_normalize_url($sef_path), true, 302);
 			exit;
 		}
 
