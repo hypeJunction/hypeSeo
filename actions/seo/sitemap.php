@@ -77,7 +77,7 @@ $entities = new ElggBatch('elgg_get_entities', [
 
 			if (!$discoverable && elgg_is_active_plugin('hypeDiscovery')) {
 				$discoverable = hypeJunction\Discovery\is_discoverable($entity)
-					&& !elgg_get_plugin_setting('nocrawl', 'hypeDiscovery');
+					&& !elgg_get_plugin_setting('nocrawl', 'hypediscovery');
 			}
 
 			if (!$discoverable) {

@@ -8,16 +8,33 @@ use hypeJunction\Seo\RewriteService;
 
 class RewriteServiceCRUDTest extends IntegrationTestCase {
 
-	private RewriteService $svc;
+	/** @var RewriteService */
+    private RewriteService $svc;
 
 	/** @var int[] Route IDs created during a test, cleaned up in down() */
 	private array $created_ids = [];
 
-	public function up() {
+	/**
+     * @return mixed
+     */
+    public function up() {
 		$this->svc = new RewriteService(new class implements Cache {
-			public function get($key, callable $callback = null, $default = null) { return $default; }
-			public function invalidate($key) {}
-			public function put($key, $value) {}
+			/**
+             * @param mixed $key
+             * @param callable $callback
+             * @param mixed $default
+             * @return mixed
+             */
+            public function get($key, callable $callback = null, $default = null) { return $default; }
+			/**
+             * @param mixed $key
+             */
+            public function invalidate($key) {}
+			/**
+             * @param mixed $key
+             * @param mixed $value
+             */
+            public function put($key, $value) {}
 		});
 	}
 
@@ -28,11 +45,18 @@ class RewriteServiceCRUDTest extends IntegrationTestCase {
 		$this->created_ids = [];
 	}
 
-	public function getPluginID(): string {
+	/**
+     * @return string
+     */
+    public function getPluginID(): string {
 		return '';
 	}
 
-	private function save(array $overrides = []): int {
+	/**
+     * @param array $overrides
+     * @return int
+     */
+    private function save(array $overrides = []): int {
 		$uid = uniqid('', true);
 		$data = array_merge([
 			'path' => '/blog/test-post-' . $uid,
@@ -49,7 +73,10 @@ class RewriteServiceCRUDTest extends IntegrationTestCase {
 		return $id;
 	}
 
-	public function testSaveDataCreatesRoute(): void {
+	/**
+     * @return void
+     */
+    public function testSaveDataCreatesRoute(): void {
 		$uid = uniqid('', true);
 		$path = '/blog/test-save-' . $uid;
 		$sef = '/posts/test-save-' . $uid;
@@ -61,7 +88,10 @@ class RewriteServiceCRUDTest extends IntegrationTestCase {
 		$this->assertSame($sef, $rules['sef_path']);
 	}
 
-	public function testSaveDataPersistsMetaFields(): void {
+	/**
+     * @return void
+     */
+    public function testSaveDataPersistsMetaFields(): void {
 		$uid = uniqid('', true);
 		$path = '/blog/meta-test-' . $uid;
 		$sef = '/posts/meta-test-' . $uid;
@@ -79,7 +109,10 @@ class RewriteServiceCRUDTest extends IntegrationTestCase {
 		$this->assertSame('key1,key2', $rules['keywords']);
 	}
 
-	public function testGetRewriteRulesFromUriFindsBySefPath(): void {
+	/**
+     * @return void
+     */
+    public function testGetRewriteRulesFromUriFindsBySefPath(): void {
 		$uid = uniqid('', true);
 		$path = '/blog/sef-lookup-' . $uid;
 		$sef = '/posts/sef-lookup-' . $uid;
@@ -91,12 +124,18 @@ class RewriteServiceCRUDTest extends IntegrationTestCase {
 		$this->assertSame($sef, $rules['sef_path']);
 	}
 
-	public function testGetRewriteRulesFromUriReturnsFalseForUnknownPath(): void {
+	/**
+     * @return void
+     */
+    public function testGetRewriteRulesFromUriReturnsFalseForUnknownPath(): void {
 		$result = $this->svc->getRewriteRulesFromUri('/no-such-path-' . uniqid('', true));
 		$this->assertFalse($result);
 	}
 
-	public function testCountRewriteRulesReflectsSavedRoutes(): void {
+	/**
+     * @return void
+     */
+    public function testCountRewriteRulesReflectsSavedRoutes(): void {
 		$before = (int) $this->svc->countRewriteRules();
 		$this->save();
 		$this->save();
@@ -104,7 +143,10 @@ class RewriteServiceCRUDTest extends IntegrationTestCase {
 		$this->assertSame($before + 2, $after);
 	}
 
-	public function testDeleteDataRemovesRoute(): void {
+	/**
+     * @return void
+     */
+    public function testDeleteDataRemovesRoute(): void {
 		$uid = uniqid('', true);
 		$path = '/blog/del-test-' . $uid;
 		$sef = '/posts/del-test-' . $uid;
@@ -117,7 +159,10 @@ class RewriteServiceCRUDTest extends IntegrationTestCase {
 		$this->assertFalse($this->svc->getRewriteRulesFromUri($path));
 	}
 
-	public function testDeleteDataFromGUIDRemovesRoutesForEntity(): void {
+	/**
+     * @return void
+     */
+    public function testDeleteDataFromGUIDRemovesRoutesForEntity(): void {
 		$admin = $this->createUser();
 		$admin->makeAdmin();
 		\elgg_get_session()->setLoggedInUser($admin);
@@ -140,7 +185,10 @@ class RewriteServiceCRUDTest extends IntegrationTestCase {
 		\elgg_get_session()->removeLoggedInUser();
 	}
 
-	public function testSaveDataMetatagsStoredAsJson(): void {
+	/**
+     * @return void
+     */
+    public function testSaveDataMetatagsStoredAsJson(): void {
 		$uid = uniqid('', true);
 		$path = '/blog/meta-json-' . $uid;
 		$sef = '/posts/meta-json-' . $uid;

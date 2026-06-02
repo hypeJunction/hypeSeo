@@ -17,7 +17,13 @@ $this->cache = new Flintstone('sef_data_cache', [
 		]);
 	}
 
-	public function get($key, callable $callback = null, $default = null) {
+	/**
+     * @param mixed $key
+     * @param callable $callback
+     * @param mixed $default
+     * @return mixed
+     */
+    public function get($key, callable $callback = null, $default = null) {
 		$value = $this->cache->get($key);
 		if (!isset($value)) {
 			$value = $default;
@@ -28,11 +34,18 @@ $this->cache = new Flintstone('sef_data_cache', [
 		return $value;
 	}
 
-	public function invalidate($key) {
+	/**
+     * @param mixed $key
+     */
+    public function invalidate($key) {
 		$this->cache->delete($key);
 	}
 
-	public function put($key, $value) {
+	/**
+     * @param mixed $key
+     * @param mixed $value
+     */
+    public function put($key, $value) {
 		$this->cache->set($key, $value);
 	}
 

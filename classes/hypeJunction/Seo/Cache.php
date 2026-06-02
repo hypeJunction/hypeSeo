@@ -10,9 +10,21 @@ namespace hypeJunction\Seo;
  */
 interface Cache {
 
+    /**
+     * @param mixed $key
+     * @param callable $callback
+     * @param mixed $default
+     */
     public function get($key, callable $callback = null, $default = null);
 
+    /**
+     * @param mixed $key
+     */
     public function invalidate($key);
 
+    /**
+     * @param mixed $key
+     * @param mixed $value
+     */
     public function put($key, $value);
 }

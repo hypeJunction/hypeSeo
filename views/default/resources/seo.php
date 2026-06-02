@@ -1,7 +1,7 @@
 <?php
 /**
  * Resource view for the /seo/{segments} named route. Replaces the
- * legacy elgg_register_page_handler('seo', ...) that lived in 2.x.
+ * legacy 'seo' page handler that lived in 2.x.
  *
  * Supported segments:
  *   /seo/edit                    → inline edit dialog (delegates to resources/seo/edit)
