@@ -13,6 +13,9 @@ use PHPUnit\Framework\TestCase;
  */
 class RewriteServiceTest extends TestCase {
 
+    /**
+     * @return void
+     */
     public function testRowToSefDataCastsColumnsAndParsesAliases(): void {
         $svc = $this->makeService();
         $row = (object) [
@@ -38,6 +41,9 @@ class RewriteServiceTest extends TestCase {
         $this->assertSame([], $data['metatags']);
     }
 
+    /**
+     * @return void
+     */
     public function testRowToSefDataUnserializesMetatags(): void {
         $svc = $this->makeService();
         $metatags = ['og:title' => 'Hello', 'og:type' => 'article'];
@@ -57,11 +63,27 @@ class RewriteServiceTest extends TestCase {
         $this->assertSame($metatags, $data['metatags']);
     }
 
+    /**
+     * @return RewriteService
+     */
     private function makeService(): RewriteService {
         $pool = new class implements \hypeJunction\Seo\Cache {
+            /**
+             * @param mixed $key
+             * @param callable $callback
+             * @param mixed $default
+             * @return mixed
+             */
             public function get($key, callable $callback = null, $default = null) {
  return $default; }
+            /**
+             * @param mixed $key
+             */
             public function invalidate($key) {}
+            /**
+             * @param mixed $key
+             * @param mixed $value
+             */
             public function put($key, $value) {}
         };
         return new RewriteService($pool);
