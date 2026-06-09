@@ -32,7 +32,7 @@ class MigratePluginId extends AsynchronousUpgrade {
 	}
 
 	public function countItems(): int {
-		return Batch::UNKNOWN_COUNT;
+		return self::UNKNOWN_COUNT;
 	}
 
 	public function run(Result $result, $offset): Result {
@@ -49,7 +49,7 @@ class MigratePluginId extends AsynchronousUpgrade {
 			return $result;
 		}
 
-		$settings = $old->getAllPrivateSettings();
+		$settings = $old->getAllSettings();
 		foreach ($settings as $name => $value) {
 			if ($name === \ElggPlugin::PRIORITY_SETTING_NAME) {
 				// Skip internal priority — the new entity manages its own ordering

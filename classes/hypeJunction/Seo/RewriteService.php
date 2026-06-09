@@ -583,7 +583,7 @@ class RewriteService {
 	 */
 	public function normalizeData(array $data = []) {
 		$guid = elgg_extract('guid', $data);
-		$entity = get_entity($guid);
+		$entity = $guid ? get_entity((int) $guid) : null;
 
 		if ($entity) {
 			if (!$data['title']) {
