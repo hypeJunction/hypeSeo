@@ -96,7 +96,5 @@ echo elgg_view('input/submit', [
 	'wrapper_class' => 'elgg-foot',
 	'value' => elgg_echo('save'),
 ]);
-?>
-<script>
-	require(['forms/seo/edit']);
-</script>
+
+elgg_import_esm('forms/seo/edit');
