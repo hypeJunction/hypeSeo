@@ -1,6 +1,6 @@
 <?php
 
-admin_gatekeeper();
+elgg_admin_gatekeeper();
 
 $uri = get_input('page_uri');
 if (!$uri) {

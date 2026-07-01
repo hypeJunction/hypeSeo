@@ -2,7 +2,7 @@
 
 namespace hypeJunction\Seo\Upgrades;
 
-use Elgg\Upgrade\Batch;
+use Elgg\Upgrade\AsynchronousUpgrade;
 use Elgg\Upgrade\Result;
 
 /**
@@ -14,7 +14,7 @@ use Elgg\Upgrade\Result;
  * matches plugin entities by title, the 3.x entity is orphaned on upgrade and
  * all admin-configured settings become inaccessible.
  */
-class MigratePluginId implements Batch {
+class MigratePluginId extends AsynchronousUpgrade {
 
 	const OLD_ID = 'hypeSeo';
 	const NEW_ID = 'hypeseo';
@@ -32,7 +32,7 @@ class MigratePluginId implements Batch {
 	}
 
 	public function countItems(): int {
-		return Batch::UNKNOWN_COUNT;
+		return self::UNKNOWN_COUNT;
 	}
 
 	public function run(Result $result, $offset): Result {
@@ -49,7 +49,7 @@ class MigratePluginId implements Batch {
 			return $result;
 		}
 
-		$settings = $old->getAllPrivateSettings();
+		$settings = $old->getAllSettings();
 		foreach ($settings as $name => $value) {
 			if ($name === \ElggPlugin::PRIORITY_SETTING_NAME) {
 				// Skip internal priority — the new entity manages its own ordering

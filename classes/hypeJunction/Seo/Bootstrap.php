@@ -63,7 +63,7 @@ class Bootstrap extends DefaultPluginBootstrap {
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
 			");
 		} catch (\Throwable $e) {
-			\elgg_log('hypeSeo: failed to create SEF tables: ' . $e->getMessage(), 'ERROR');
+			\elgg_log('hypeSeo: failed to create SEF tables: ' . $e->getMessage(), 'error');
 			throw $e;
 		}
 	}
