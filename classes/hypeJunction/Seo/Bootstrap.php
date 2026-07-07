@@ -79,6 +79,15 @@ class Bootstrap extends DefaultPluginBootstrap {
 	 *
 	 * @return void
 	 */
+	public function boot() {
+		// Elgg 7: register the SEF inbound rewrite during plugins_boot, BEFORE
+		// Application::allowPathRewrite() fires the 'route:rewrite' event. The
+		// declarative elgg-plugin.php 'events' registration runs during 'init'
+		// (after allowPathRewrite), so the handler would miss the dispatch and
+		// every pretty entity URL (/@user, /course/*, /topic/*, …) would 404.
+		\elgg_register_event_handler('route:rewrite', 'all', 'hypeJunction\\Seo\\Router::enforceRewriteRules', 1);
+	}
+
 	public function init() {
 		\elgg_register_menu_item('page', [
 			'name' => 'seo:settings',
