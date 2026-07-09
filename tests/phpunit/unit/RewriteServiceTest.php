@@ -57,6 +57,40 @@ class RewriteServiceTest extends TestCase {
         $this->assertSame($metatags, $data['metatags']);
     }
 
+    /**
+     * decodeMetatags must be object-injection safe: legacy PHP-serialized rows
+     * are unserialized with allowed_classes=false, so a serialized OBJECT never
+     * instantiates — it decodes to [] rather than a live object (FC-ALL-01).
+     */
+    public function testRowToSefDataDoesNotInstantiateSerializedObjects(): void {
+        $svc = $this->makeService();
+        $row = (object) [
+            'id' => '9',
+            'path' => '/p',
+            'sef_path' => '/p',
+            'title' => '',
+            'description' => '',
+            'keywords' => '',
+            'aliases' => '/p',
+            'metatags' => serialize((object) ['evil' => 'payload']),
+            'entity_guid' => '0',
+        ];
+
+        $data = $svc->rowToSefData($row);
+        $this->assertSame([], $data['metatags']);
+    }
+
+    /**
+     * normalizeUri returns false for non-string / empty input before touching
+     * elgg_normalize_url(), which requires a string in 7.x (was lenient in 3.x).
+     */
+    public function testNormalizeUriRejectsNonStringAndEmptyInput(): void {
+        $svc = $this->makeService();
+        $this->assertFalse($svc->normalizeUri(''));
+        $this->assertFalse($svc->normalizeUri(42));
+        $this->assertFalse($svc->normalizeUri([]));
+    }
+
     private function makeService(): RewriteService {
         $pool = new class implements \hypeJunction\Seo\Cache {
             public function get($key, callable $callback = null, $default = null) {

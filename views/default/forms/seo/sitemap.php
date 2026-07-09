@@ -1,6 +1,6 @@
 <?php
 
-if (!elgg_is_active_plugin('hypeDiscovery') && elgg_get_config('walled_garden')) {
+if (!elgg_is_active_plugin('hypediscovery') && elgg_get_config('walled_garden')) {
 	echo elgg_format_element('p', [
 		'class' => 'elgg-text-help',
 	], elgg_autop(elgg_echo('seo:sitemap:error')));
