@@ -546,7 +546,7 @@ class RewriteService {
 			$title = $entity->getDisplayName() ?: $entity->description;
 			$replacements = [
 				'{guid}' => $entity->guid,
-				'{title}' => elgg_get_friendly_title(elgg_get_excerpt($title, 50)),
+				'{title}' => elgg_get_friendly_title(elgg_get_excerpt((string) $title, 50)),
 				'{username}' => $entity instanceof ElggUser ? $entity->username : '',
 				'{timestamp}' => $entity->time_crated,
 				'{date}' => gmdate('Y-m-d', $entity->time_created),
@@ -591,7 +591,7 @@ class RewriteService {
 			}
 
 			if (!$data['description']) {
-				$data['description'] = elgg_get_excerpt($entity->description);
+				$data['description'] = elgg_get_excerpt((string) $entity->description);
 			}
 
 			if (!$data['keywords']) {
