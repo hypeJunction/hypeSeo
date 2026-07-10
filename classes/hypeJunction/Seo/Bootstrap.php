@@ -40,7 +40,9 @@ class Bootstrap extends DefaultPluginBootstrap {
 					entity_guid bigint(20) unsigned NOT NULL DEFAULT '0',
 					custom enum('yes','no') NOT NULL DEFAULT 'no',
 					PRIMARY KEY (id),
-					UNIQUE KEY sef_path (sef_path)
+					UNIQUE KEY sef_path (sef_path),
+					KEY path (path),
+					KEY entity_guid (entity_guid)
 				) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
 			");
 

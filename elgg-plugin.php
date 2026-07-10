@@ -6,6 +6,7 @@ use hypeJunction\Seo\Page;
 use hypeJunction\Seo\RewriteService;
 use hypeJunction\Seo\Router;
 use hypeJunction\Seo\Upgrades\MigratePluginId;
+use hypeJunction\Seo\Upgrades\IndexSefRoutes;
 
 return [
 	'plugin' => [
@@ -115,6 +116,7 @@ return [
 
 	'upgrades' => [
 		MigratePluginId::class,
+		IndexSefRoutes::class,
 	],
 
 	'view_extensions' => [

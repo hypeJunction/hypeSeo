@@ -12,6 +12,11 @@ use stdClass;
 class RewriteService {
 
 	/**
+	 * Cached sentinel for "this path has no SEF route".
+	 */
+	const MISS = '__hypeseo_no_route__';
+
+	/**
 	 * @var self|null
 	 */
 	public static $_instance;
@@ -134,18 +139,35 @@ class RewriteService {
 
 		$hash = sha1($path);
 		$data = $this->routes_cache->get($hash);
+		if ($data === self::MISS) {
+			return false;
+		}
 		if ($data) {
 			return $data;
 		}
 
+		// An OR across three tables (rt.path / rt.sef_path / at.path) cannot use any
+		// index: MySQL full-scans elgg_sef_aliases for every lookup. On a river page
+		// that is ~39 scans of ~11.7k rows -- 126ms each, 4.9s of the 5.9s render.
+		//
+		// Resolve the route id first, as a UNION of three individually-indexed
+		// equality lookups, then fetch the row by primary key.
 		$query = "
 			SELECT rt.*,
 				   ri.*,
 				   GROUP_CONCAT(at.path) as aliases
 			FROM {$this->table} AS rt
 			JOIN {$this->data_table} AS ri ON ri.route_id = rt.id
-			JOIN {$this->aliases_table} at ON at.route_id = rt.id 
-			WHERE rt.path = :path OR rt.sef_path = :path OR at.path = :path
+			JOIN {$this->aliases_table} at ON at.route_id = rt.id
+			WHERE rt.id = (
+				SELECT route_id FROM (
+					SELECT id AS route_id FROM {$this->table} WHERE path = :path
+					UNION ALL
+					SELECT id AS route_id FROM {$this->table} WHERE sef_path = :path
+					UNION ALL
+					SELECT route_id FROM {$this->aliases_table} WHERE path = :path
+				) AS m LIMIT 1
+			)
 			GROUP BY at.route_id
 			LIMIT 1
 		";
@@ -155,6 +177,9 @@ class RewriteService {
 		$data = array_map(fn($r) => $callback((object) $r), $rows);
 
 		if (!$data) {
+			// Cache the MISS too. Elgg renders many URLs that have no SEF route, and
+			// without this every one of them re-runs the lookup on every request.
+			$this->routes_cache->put($hash, self::MISS);
 			return false;
 		}
 
